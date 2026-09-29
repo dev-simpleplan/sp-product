@@ -77,6 +77,37 @@ const CLOSE_ICON = (
 // without it snapping shut in the gap between them.
 const CLOSE_DELAY_MS = 200;
 
+const PRODUCT_SHOP_COLUMNS = [
+  {
+    id: "product-audience",
+    page_name: "For",
+    page_url: "#",
+    sub_pages: [
+      { id: "freelancers", page_name: "Freelancers", page_url: "#" },
+      { id: "founders", page_name: "Founders", page_url: "#" },
+      { id: "agency-owners", page_name: "Agency Owners", page_url: "#" },
+    ],
+  },
+  {
+    id: "product-types",
+    page_name: "Products",
+    page_url: "#",
+    sub_pages: [
+      { id: "guides", page_name: "Guides", page_url: "#" },
+      { id: "diy-templates", page_name: "DIY Templates", page_url: "#" },
+      { id: "website-templates", page_name: "Website Templates", page_url: "#" },
+      { id: "shopify-apps", page_name: "Shopify Apps", page_url: "#" },
+    ],
+  },
+];
+
+const PRODUCT_SHOP_CTA = {
+  label: "Shop All Products",
+  href: "#",
+};
+
+const PRODUCT_ABOUT_LINK = "/product/about";
+
 function isPlaceholderLink(link) {
   return !link || link === "#" || link === "#!";
 }
@@ -87,6 +118,7 @@ function normalizeLink(link, fallback) {
 
 export default function Header() {
   const pathname = usePathname();
+  const isProductHeader = pathname === "/" || pathname?.startsWith("/product");
 
   // Pages that get the white header + black logo. This is an ALLOWLIST —
   // only pages listed here (or nested under them) get the white treatment;
@@ -131,11 +163,13 @@ export default function Header() {
   const aboutUsMenu = findMenu("about us", 1);
   const ourWorkMenu = findMenu("our work", 2);
 
-  const whatWeDoColumns = whatWeDoMenu?.mega_menu || [];
+  const whatWeDoColumns = isProductHeader
+    ? PRODUCT_SHOP_COLUMNS
+    : whatWeDoMenu?.mega_menu || [];
   const aboutUsColumns = aboutUsMenu?.mega_menu || [];
 
-  const whatWeDoLabel = whatWeDoMenu?.page_name || "What We Do";
-  const aboutUsLabel = aboutUsMenu?.page_name || "About Us";
+  const whatWeDoLabel = isProductHeader ? "Shop" : whatWeDoMenu?.page_name || "What We Do";
+  const aboutUsLabel = isProductHeader ? "About Us" : aboutUsMenu?.page_name || "About Us";
   const ourWorkLabel = ourWorkMenu?.page_name || "Our Work";
   const ourWorkLink = normalizeLink(ourWorkMenu?.page_url, "/our-work");
   const ctaLink = normalizeLink(headerData?.cta_link, "/contact");
@@ -367,12 +401,21 @@ useEffect(() => {
   return (
     <header
   className={`${styles.spHeader} ${
+    isProductHeader ? styles.spProductHeader : ""
+  } ${
     isScrolled ? styles.spHeaderScrolled : ""
   } ${isAnyMenuOpen ? styles.spHeaderMenuOpen : ""} ${
     (isInStickySection || isHiddenByScroll) ? styles.spHeaderHidden : ""
   } ${isInnerPage ? styles.spHeaderWhite : ""}`}
   ref={headerRef}
 >
+  {isProductHeader && (
+    <div className={styles.spOfferBar}>
+      <strong>Limited Time Offer</strong>
+      <span aria-hidden="true">•</span>
+      <span>Join 1,000+ builders. Use code <b>GROW20</b> for 20% off all bundles.</span>
+    </div>
+  )}
   <div className={styles.spHeaderInner}>
       <div className={styles.spHeaderBar} ref={headerBarRef}>
   <Link href="/" className={styles.spLogo}>
@@ -413,24 +456,32 @@ useEffect(() => {
           </span>
         </button>
 
-        <button
-          type="button"
-          className={`${styles.spNavItem} ${isAboutUsOpen ? styles.spNavItemActive : ""}`}
-          aria-expanded={isAboutUsOpen}
-          onMouseEnter={() => openMenu("about-us")}
-          onMouseLeave={scheduleClose}
-          onFocus={() => openMenu("about-us")}
-          onBlur={scheduleClose}
-        >
-          <span>{aboutUsLabel}</span>
-          <span className={`${styles.spChevron} ${isAboutUsOpen ? styles.spChevronOpen : ""}`}>
-            {CHEVRON_DOWN}
-          </span>
-        </button>
+        {isProductHeader ? (
+          <Link href={PRODUCT_ABOUT_LINK} className={styles.spNavLink}>
+            {aboutUsLabel}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className={`${styles.spNavItem} ${isAboutUsOpen ? styles.spNavItemActive : ""}`}
+            aria-expanded={isAboutUsOpen}
+            onMouseEnter={() => openMenu("about-us")}
+            onMouseLeave={scheduleClose}
+            onFocus={() => openMenu("about-us")}
+            onBlur={scheduleClose}
+          >
+            <span>{aboutUsLabel}</span>
+            <span className={`${styles.spChevron} ${isAboutUsOpen ? styles.spChevronOpen : ""}`}>
+              {CHEVRON_DOWN}
+            </span>
+          </button>
+        )}
 
-        <a href={ourWorkLink} className={styles.spNavLink}>
-          {ourWorkLabel}
-        </a>
+        {!isProductHeader && (
+          <a href={ourWorkLink} className={styles.spNavLink}>
+            {ourWorkLabel}
+          </a>
+        )}
       </nav>
     </div>
 
@@ -456,24 +507,32 @@ useEffect(() => {
           </span>
         </button>
 
-        <button
-          type="button"
-          className={`${styles.spNavItem} ${isAboutUsOpen ? styles.spNavItemActive : ""}`}
-          aria-expanded={isAboutUsOpen}
-          onMouseEnter={() => openMenu("about-us")}
-          onMouseLeave={scheduleClose}
-          onFocus={() => openMenu("about-us")}
-          onBlur={scheduleClose}
-        >
-          <span>{aboutUsLabel}</span>
-          <span className={`${styles.spChevron} ${isAboutUsOpen ? styles.spChevronOpen : ""}`}>
-            {CHEVRON_DOWN}
-          </span>
-        </button>
+        {isProductHeader ? (
+          <Link href={PRODUCT_ABOUT_LINK} className={styles.spNavLink}>
+            {aboutUsLabel}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className={`${styles.spNavItem} ${isAboutUsOpen ? styles.spNavItemActive : ""}`}
+            aria-expanded={isAboutUsOpen}
+            onMouseEnter={() => openMenu("about-us")}
+            onMouseLeave={scheduleClose}
+            onFocus={() => openMenu("about-us")}
+            onBlur={scheduleClose}
+          >
+            <span>{aboutUsLabel}</span>
+            <span className={`${styles.spChevron} ${isAboutUsOpen ? styles.spChevronOpen : ""}`}>
+              {CHEVRON_DOWN}
+            </span>
+          </button>
+        )}
 
-        <a href={ourWorkLink} className={styles.spNavLink}>
-          {ourWorkLabel}
-        </a>
+        {!isProductHeader && (
+          <a href={ourWorkLink} className={styles.spNavLink}>
+            {ourWorkLabel}
+          </a>
+        )}
       </nav>
 
       <Link href={ctaLink} className={`custom-btn ${styles.spHeaderCta}`}>
@@ -521,9 +580,6 @@ useEffect(() => {
                 <div className={styles.spMegaMenuColumn} key={column.id}>
                   <a href={column.page_url || "#"} className={styles.spMegaMenuColumnTitle}>
                     <span>{column.page_name}</span>
-                    <span className={styles.spMegaMenuColumnArrow}>
-                      {CHEVRON_RIGHT}
-                    </span>
                   </a>
                   <ul className={styles.spMegaMenuLinkList}>
                     {(column.sub_pages || []).map((sub) => (
@@ -537,12 +593,21 @@ useEffect(() => {
                 </div>
               ))}
             </div>
+            {isProductHeader && (
+              <a
+                href={PRODUCT_SHOP_CTA.href}
+                className={styles.spProductShopAll}
+              >
+                <span>{PRODUCT_SHOP_CTA.label}</span>
+                {CHEVRON_RIGHT}
+              </a>
+            )}
 
-            <div className={styles.spMegaMenuImageWrap}>
+              <div className={styles.spMegaMenuImageWrap}>
               <Image
                 className={styles.spMegaMenuImage}
-                src="/dropdown-image.png"
-                alt="The simpleplan team"
+                src={isProductHeader ? "/dropdown-image.jpg" : "/dropdown-image.png"}
+                alt={isProductHeader ? "Product collection" : "The simpleplan team"}
                 width={100}
                 height={100}
               />
@@ -568,9 +633,6 @@ useEffect(() => {
                 <div className={styles.spMegaMenuColumn} key={column.id}>
                   <a href={column.page_url || "#"} className={styles.spMegaMenuColumnTitle}>
                     <span>{column.page_name}</span>
-                    <span className={styles.spMegaMenuColumnArrow}>
-                      {CHEVRON_RIGHT}
-                    </span>
                   </a>
                   <ul className={styles.spMegaMenuLinkList}>
                     {(column.sub_pages || []).map((sub) => (
@@ -629,7 +691,7 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Root list: What We Do / About Us / Our Work */}
+        {/* Root list: product shop/about or the normal site's navigation */}
         {mobileView === "root" && (
           <div
             className={`${styles.spMobileBody} ${slideDirection === "back" ? styles.spMobileBodyBack : ""}`}
@@ -649,26 +711,38 @@ useEffect(() => {
                 </button>
               </li>
               <li className={styles.spMobileItem}>
-                <button
-                  type="button"
-                  className={styles.spMobileItemBtn}
-                  onClick={() => goToMobileView("about-us", "forward")}
-                >
-                  <span>{aboutUsLabel}</span>
-                  <span className={styles.spMobileChevron}>
-                    {CHEVRON_RIGHT}
-                  </span>
-                </button>
+                {isProductHeader ? (
+                  <a
+                    href={PRODUCT_ABOUT_LINK}
+                    className={styles.spMobileItemBtn}
+                    onClick={closeMobileMenu}
+                  >
+                    <span>{aboutUsLabel}</span>
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.spMobileItemBtn}
+                    onClick={() => goToMobileView("about-us", "forward")}
+                  >
+                    <span>{aboutUsLabel}</span>
+                    <span className={styles.spMobileChevron}>
+                      {CHEVRON_RIGHT}
+                    </span>
+                  </button>
+                )}
               </li>
-              <li className={styles.spMobileItemNoBorder}>
-                <a
-                  href={ourWorkLink}
-                  className={styles.spMobileItemBtn}
-                  onClick={closeMobileMenu}
-                >
-                  <span>{ourWorkLabel}</span>
-                </a>
-              </li>
+              {!isProductHeader && (
+                <li className={styles.spMobileItemNoBorder}>
+                  <a
+                    href={ourWorkLink}
+                    className={styles.spMobileItemBtn}
+                    onClick={closeMobileMenu}
+                  >
+                    <span>{ourWorkLabel}</span>
+                  </a>
+                </li>
+              )}
             </ul>
 
             <a
@@ -720,6 +794,16 @@ useEffect(() => {
                 </div>
               ))}
             </div>
+            {isProductHeader && (
+              <a
+                href={PRODUCT_SHOP_CTA.href}
+                className={styles.spMobileShopAll}
+                onClick={closeMobileMenu}
+              >
+                <span>{PRODUCT_SHOP_CTA.label}</span>
+                {CHEVRON_RIGHT}
+              </a>
+            )}
           </div>
         )}
 

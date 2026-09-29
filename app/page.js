@@ -1,156 +1,70 @@
 "use client";
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSetPreFooter } from "./context/PreFooterContext";
-import HomeBanner from "./components/HomeBanner";
-import VideoAnimated from "./components/VideoAnimated";
-import TickerSection from "./components/TickerSection";
-import BringingClarity from './components/BringingClarity';
-import OurApproach from './components/OurApproach';
-import LikeWhatYouSee from './components/LikeWhatYouSee';
-import ReadyToBuild from './components/ReadyToBuid';
-import MeetTheSimp from './components/MeetTheSimp';
-import WeAreProud from './components/WeAreProud';
-import WeDoStand from './components/WeDoStand';
-import ToolsToBuild from './components/ToolsToBuild';
-import YourBrandsLook from './components/YourBrandsLook';
-import ThinkBeforeBuild from './components/ThinkBeforeBuild';
-import TestimonialSection from './components/TestimonialSection';
-import Wayfinding from "./components/Wayfinding";
-import TrustedBrands from './components/TrustedBrands';
-import RightSideLine from "./components/RightSideLine";
 
+import { useEffect, useState } from "react";
+import axios from "axios";
+import ProductHomeBanner from "./components/ProductHomeBanner";
+import ProductStats from "./components/ProductStats";
+import BestsellingProducts from "./components/BestsellingProducts";
+import RightSideLine from "./components/RightSideLine";
+import Wayfinding from "./components/Wayfinding";
 
 export default function Home() {
-
-  const [sections, setSections] = useState({});
+  const [banner, setBanner] = useState(null);
+  const [stats, setStats] = useState([]);
+  const [bestsellingProducts, setBestsellingProducts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-   useSetPreFooter(sections?.pre_footer);
-
   useEffect(() => {
-    axios.get('/api/home-page?populate=*')
-      .then(response => {
-        if (response.data && response.data.data) {
-          setSections(response.data.data);
-        } else {
-          console.error("API response structure is incorrect", response.data);
-          setSections({});
-        }
-        setLoading(false);
+    axios
+      .get("/api/products-homepage")
+      .then(({ data }) => {
+        setBanner(data?.data?.product_home_banner || null);
+        setStats(data?.data?.stats || []);
+        setBestsellingProducts(data?.data?.bestselling_products || null);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setError(error);
-        setLoading(false);
-      });
+      .catch((requestError) => {
+        console.error("Product home banner fetch error:", requestError);
+        setError(requestError);
+      })
+      .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    if (loading) return;
-
-    // Only safe to refresh GSAP's pinned-section measurements while the
-    // user hasn't scrolled meaningfully yet — ScrollTrigger.refresh()
-    // briefly un-pins/re-pins everything, which visibly flashes/jumps if
-    // it fires while a pinned section is already active mid-scroll.
-    const isSafeToRefresh = () => window.scrollY < 200;
-
-    const notifyReady = () => {
-      if (isSafeToRefresh()) {
-        window.dispatchEvent(new Event("app:content-ready"));
-      }
-    };
-
-    notifyReady();
-
-    // Images loading after mount change section heights, which shifts
-    // every pinned trigger below them — re-notify once any images that
-    // were still loading at mount time finish, but only if still safe.
-    const pendingImages = Array.from(document.images).filter((img) => !img.complete);
-
-    if (pendingImages.length === 0) return;
-
-    let remaining = pendingImages.length;
-    const handleImageSettled = () => {
-      remaining -= 1;
-      if (remaining === 0) notifyReady();
-    };
-
-    pendingImages.forEach((img) => {
-      img.addEventListener("load", handleImageSettled, { once: true });
-      img.addEventListener("error", handleImageSettled, { once: true });
-    });
-
-    return () => {
-      pendingImages.forEach((img) => {
-        img.removeEventListener("load", handleImageSettled);
-        img.removeEventListener("error", handleImageSettled);
-      });
-    };
-  }, [loading]);
-
-  const renderSection = (key, Component) => {
-    if (!sections || !sections[key]) return null;
-    return <Component data={sections[key]} />;
-  };
-
-  const HOME_SECTIONS = [
-  { id: "hero", label: sections?.hero?.label },
-  { id: "bringing-clarity", label: sections?.struggle?.tag },
-  { id: "our-approach", label: sections?.our_approach?.tag },
-  { id: "we-are-proud", label: sections?.case_study?.tagline },
-  { id: "your-brands-look", label: sections?.service?.tag || "Services" },
-  { id: "ready-to-build", label: sections?.ready_to_build?.Tagline },
-  { id: "testimonial-section", label: sections?.testimonials?.Tagline },
-  { id: "we-do-stand", label: sections?.awards_section?.tagline },
-  { id: "meet-the-simp", label: sections?.about_section?.tagline },
-  { id: "tools-to-build", label: sections?.tools_section?.tagline },
-  { id: "think-before-build", label: sections?.blog_section?.tagline },
-
-];
 
   if (loading) {
     return (
       <div className="loading">
         <div className="loadingIn">
           <div className="loadingText">
-            <span data-text="L">L</span>
-            <span data-text="O">O</span>
-            <span data-text="A">A</span>
-            <span data-text="D">D</span>
-            <span data-text="I">I</span>
-            <span data-text="N">N</span>
-            <span data-text="G">G</span>
+            {"LOADING".split("").map((letter) => (
+              <span key={letter} data-text={letter}>
+                {letter}
+              </span>
+            ))}
           </div>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (error || !banner) {
+    return <div className="product-home-error">Unable to load the product home banner.</div>;
   }
 
   return (
     <>
-      <Wayfinding sections={HOME_SECTIONS} />
-      <RightSideLine id="rightLine"/>
-      <HomeBanner id="hero" data={sections.hero} />
-      <TickerSection/>
-      <VideoAnimated data={sections.video_section} />
-      <BringingClarity id="bringing-clarity" data={sections?.struggle}/>
-      <OurApproach  id="our-approach" data={sections.our_approach}/>
-      <WeAreProud id="we-are-proud" data={sections.case_study}/>
-      <LikeWhatYouSee id="like-what-you-see" data={sections.offer_section} stats={sections.stats}/>
-      <YourBrandsLook id="your-brands-look" data={sections.service}/>
-      <ReadyToBuild id="ready-to-build" data={sections.ready_to_build}/>
-      <TestimonialSection id="testimonial-section" data={sections.testimonials} />
-      <TrustedBrands id="trustedBy-section" data={sections.trusted_section}/>
-      <WeDoStand id="we-do-stand" data={sections.awards_section}/>
-      <MeetTheSimp id="meet-the-simp" data={sections.about_section}/>
-      <ToolsToBuild id="tools-to-build" data={sections.tools_section}/>
-      <ThinkBeforeBuild id="think-before-build" data={sections.blog_section}/>
+      <Wayfinding
+        sections={[
+          { id: "product-home-hero", label: banner.tagline || "Intro" },
+          ...(stats.length ? [{ id: "product-home-stats", label: "Stats" }] : []),
+          ...(bestsellingProducts
+            ? [{ id: "product-home-bestsellers", label: bestsellingProducts.tagline || "Bestsellers" }]
+            : []),
+        ]}
+      />
+      <RightSideLine id="rightLine" />
+      <ProductHomeBanner id="product-home-hero" data={banner} />
+      <ProductStats id="product-home-stats" stats={stats} />
+      <BestsellingProducts id="product-home-bestsellers" data={bestsellingProducts} />
     </>
   );
 }

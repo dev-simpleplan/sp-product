@@ -3,7 +3,7 @@
 export async function GET() {
   try {
     const res = await fetch(
-      "http://72.61.235.119:1337/api/home-page?populate[hero][populate]=*&populate[video_section][populate]=*&populate[struggle][populate]=*&populate[our_approach][populate]=*&populate[case_study][populate][case_study_cards][populate]=*&populate[offer_section][populate]=*&populate[stats][populate]=*&populate[service][populate]=*&populate[ready_to_build][populate]=*&populate[testimonials][populate][testimonial_data][populate]=*&populate[trusted_section][populate]=*&populate[awards_section][populate][projects][populate]=*&populate[about_section][populate]=*&populate[tools_section][populate][tools][populate]=*&populate[blog_section][populate][blog_posts][populate]=*&populate[pre_footer][populate]=*",
+      "http://72.61.235.119:1337/api/products-homepage?populate[product_home_banner][populate]=*&populate[stats][populate]=*&populate[bestselling_products][populate][products_type][populate][products][populate]=*&populate[testimonials_section][populate]=*&populate[popular_categories][populate][categories][populate]=*&populate[expert_tools][populate]=*&populate[trusted_brands][populate]=*&populate[brand_strategy_product][populate]=*&populate[selling_bundles][populate][bundles][populate]=*&populate[about_section][populate]=*&populate[free_guide][populate]=*",
       {
         headers: {
           Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,

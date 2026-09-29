@@ -607,3 +607,7 @@ body.hide-side-rails .side-rail {
 section.open-position .op-list.gap-left {
   padding-right: 100px;
 }
+
+.gap-left.pr-0 {
+  padding-right: 0;
+}
