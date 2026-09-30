@@ -13,6 +13,17 @@ const PLAY_ICON = (
 const isVideo = (media) =>
   media?.mime?.toLowerCase().startsWith("video/");
 
+function getTextFromBlocks(blocks) {
+  return (blocks || [])
+    .map((block) =>
+      (block?.children || [])
+        .map((child) => child?.text || "")
+        .join("")
+        .trim()
+    )
+    .filter(Boolean);
+}
+
 // Matches youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID, and
 // youtube.com/shorts/ID — returns null for anything else (e.g. a direct
 // .mp4 URL), which is how we tell "YouTube link" apart from "video file".
@@ -181,10 +192,15 @@ export default function Initiatives({ id, data }) {
   if (!data) return null;
 
   const title = data?.title;
-  const description =
-    data?.description?.[0]?.children?.[0]?.text;
+  const descriptions = getTextFromBlocks(
+    data?.right_side_description?.length
+      ? data.right_side_description
+      : data?.description
+  );
+  const subheading = getTextFromBlocks(data?.description)[0];
   const ctaText = data?.cta_text;
   const ctaLink = data?.cta_link;
+  const media = data?.thumbnail || data?.image;
 
   return (
     <section className="sp-for-good-sec" id={id}>
@@ -192,19 +208,24 @@ export default function Initiatives({ id, data }) {
         <div className="spFor-good-in gap-left">
           <div className="heading">
             <h2 className="reveal-heading">{title}</h2>
+            {subheading && (
+              <p className="initiatives-subheading">{subheading}</p>
+            )}
           </div>
 
           <div className="spFor-good-grid">
             <div className="for-good-img">
               <MediaBlock
-                image={data?.image}
+                image={media}
                 videoUrl={data?.videourl}
                 alt={title}
               />
             </div>
 
             <div className="for-good-info">
-              <p>{description}</p>
+              {descriptions.map((description, index) => (
+                <p key={`${description}-${index}`}>{description}</p>
+              ))}
 
               {ctaLink && (
   <div className="for-good-cta">

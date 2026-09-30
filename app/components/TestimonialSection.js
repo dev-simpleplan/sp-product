@@ -6,7 +6,7 @@ import brandImg from "./images/test-brand-img.svg";
 import { getImageUrl } from "./getImageUrl";
 
 
-export default function TestimonialSection({ id, data }) {
+export default function TestimonialSection({ id, data, productVariant = false }) {
   const swiperRef = useRef(null);
 
   if (!data) return null;
@@ -14,7 +14,7 @@ export default function TestimonialSection({ id, data }) {
   const testimonials = data?.testimonial_data || [];
 
   return (
-    <section className="testimonial-section" id={id}>
+    <section className={`testimonial-section ${productVariant ? "testimonial-section--product" : ""}`} id={id}>
       <div className="container">
         <div className="testimonial-slider-wrap gap-left">
           <Swiper
@@ -33,22 +33,35 @@ export default function TestimonialSection({ id, data }) {
               <SwiperSlide key={t.id}>
                 <div className="testimonial-block">
                   <div className="ts-platform">
+                    {productVariant && (
+                      <span className="testimonial-product-label">Brand Bundle Kit</span>
+                    )}
                     <div className="ts-brand-logo">
-                      <img src={brandImg.src} alt="Platform" className="icon" />
+                      {!productVariant && (
+                        <img src={brandImg.src} alt="Platform" className="icon" />
+                      )}
                     </div>
                   </div>
-                  <p className="ts-quote">{t.testimonial_text?.[0]?.children?.[0]?.text}</p>
+                  <p className="ts-quote">
+                    {t.testimonial_text?.[0]?.children?.[0]?.text || t.text || t.testimonial}
+                  </p>
                   <div className="author">
-                    <div className="author-img">
-                      <img
-                        src={getImageUrl(t.user_image)}
-                        alt={t.user_name}
-                        className="img"
-                      />
-                    </div>
+                    {!productVariant && t.user_image && (
+                      <div className="author-img">
+                        <img
+                          src={getImageUrl(t.user_image)}
+                          alt={t.user_name}
+                          className="img"
+                        />
+                      </div>
+                    )}
                     <div className="author-details">
-                      <p className="author-name">{t.user_name}</p>
-                      <p className="author-desig">{t.user_designation}</p>
+                      <p className="author-name">{t.user_name || t.name}</p>
+                      {productVariant ? (
+                        <p className="author-desig">★ {t.rating || "4.9"}</p>
+                      ) : (
+                        <p className="author-desig">{t.user_designation}</p>
+                      )}
                     </div>
                   </div>
                 </div>

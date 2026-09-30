@@ -1,4 +1,8 @@
-const logos = [
+"use client";
+
+import { getImageUrl } from "./getImageUrl";
+
+const fallbackLogos = [
   { src: "/images/logo-1.svg", alt: "Client logo 1" },
   { src: "/images/logo-2.svg", alt: "Client logo 2" },
   { src: "/images/logo-3.svg", alt: "Client logo 3" },
@@ -8,12 +12,20 @@ const logos = [
   { src: "/images/logo-7.svg", alt: "Client logo 7" },
 ];
 
-// Duplicate for seamless infinite loop
-const track = [...logos, ...logos];
+export default function TickerSection({ id, data }) {
+  const logos = data?.image?.length
+    ? data.image.map((image) => ({
+        src: getImageUrl(image),
+        alt: image.alternativeText || image.name || "Trusted brand",
+      }))
+    : fallbackLogos;
+  const track = [...logos, ...logos];
 
-export default function TickerSection({id}) {
   return (
     <section className="ticker-section" id={id}>
+      {data?.description && (
+        <h2 className="ticker-heading reveal-heading">{data.description}</h2>
+      )}
       <div className="ticker-inner">
         <div className="ticker-track">
           {track.map((logo, i) => (

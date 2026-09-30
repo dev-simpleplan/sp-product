@@ -35,6 +35,22 @@
 .spOfferBar>span:nth-child(2) {
     color: var(--sp-red);
     font-size: 18px;
+    animation: spOfferDotPulse 1.4s ease-in-out infinite;
+    display: inline-block;
+    transform-origin: center;
+}
+
+@keyframes spOfferDotPulse {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.82);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
 }
 
 .spOfferBar b {
