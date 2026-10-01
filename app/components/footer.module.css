@@ -20,7 +20,7 @@
     align-items: center;
 }
 
-.spFooterWatermark img{
+.spFooterWatermark img {
     width: max-content;
 }
 
@@ -50,16 +50,16 @@
     font-style: italic;
     color: #ffffff;
     font-size: 64px;
-    margin: 0 0 15px 0;
+    margin: 0;
     font-weight: 300;
     line-height: 1.15;
     letter-spacing: -2%;
-    max-width: 17ch;
+    max-width: 20ch;
 }
 
 .spFooterSubtext {
     color: #fff;
-    margin: 0 0 40px;
+    margin: 0 0 25px;
     font-size: 20px;
     line-height: 130%;
     font-weight: 400;
@@ -95,16 +95,15 @@
 .spNewsletterLabel {
     display: block;
     color: #fff;
-    opacity: 0.85;
-    font-size: 13px;
-    margin-bottom: 8px;
+    font-size: 16px;
+    margin-bottom: 12px;
 }
 
 .spNewsletterField {
     display: flex;
     align-items: stretch;
     gap: 16px;
-    max-width: 480px;
+    max-width: 540px;
     /* background: #fff; */
     border-radius: 2px;
     overflow: hidden;
@@ -121,16 +120,18 @@
     border-bottom: 1px solid #DEDEDE;
     color: #fff;
 }
+
 .spNewsletterInput::placeholder {
     color: #DEDEDE;
 }
+
 .spNewsletterSubmit {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
     border: none;
-    border-left: 1px solid #eee;
+    border: 1px solid #eee;
     background: #fff;
     color: #1a1a1a;
     font-size: 12px;
@@ -160,21 +161,21 @@
 /* Columns */
 
 .spFooterColumns {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 64px;
-    margin-bottom: 96px;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    gap: 32px;
+    margin-bottom: 0px;
     margin-top: 140px;
 }
 
 .spFooterColumn {
-    min-width: 160px;
-    flex: 1;
+    min-width: 0;
 }
 
 .spFooterColumn:last-child {
-    margin-left: auto;
-    flex: 0 0 auto;
+    justify-self: end;
+    width: 100%;
+    max-width: 420px;
 }
 
 .spFooterColumnTitle {
@@ -207,40 +208,55 @@
     text-decoration: underline;
 } */
 
-.spFooterLink{
-    display:inline-block;
-    overflow:hidden;
-    text-decoration:none;
-    color:#fff;
+.spFooterLink {
+    display: inline-block;
+    overflow: hidden;
+    text-decoration: none;
+    color: #fff;
 }
 
-.spFooterTextWrap{
-    display:block;
-    position:relative;
-    overflow:hidden;
-    height:1.15em;
+.spFooterTextWrap {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: 1.15em;
     /* border: 1px solid white; */
 }
 
 .spFooterText1,
-.spFooterText2{
-    display:block;
-    transition:transform .45s cubic-bezier(.22,1,.36,1);
+.spFooterText2 {
+    display: block;
+    transition: transform .45s cubic-bezier(.22, 1, .36, 1);
     line-height: 1.15em;
 }
 
-.spFooterText2{
-    position:absolute;
-    left:0;
-    top:100%;
+.spFooterText2 {
+    position: absolute;
+    left: 0;
+    top: 100%;
 }
 
-.spFooterLink:hover .spFooterText1{
-    transform:translateY(-100%);
+.spFooterLink:hover .spFooterText1 {
+    transform: translateY(-100%);
 }
 
-.spFooterLink:hover .spFooterText2{
-    transform:translateY(-100%);
+.spFooterLink:hover .spFooterText2 {
+    transform: translateY(-100%);
+}
+
+.spFooterRecognition {
+    display: block;
+    align-self: flex-end;
+    margin: 0px 0 72px auto;
+    max-width: 320px;
+    position: static;
+    width: 320px;
+}
+
+.spFooterRecognition img {
+    display: block;
+    height: auto;
+    width: 100%;
 }
 
 /* Bottom bar */
@@ -285,6 +301,7 @@
     }
 
     .spFooterColumns {
+        grid-template-columns: 1.35fr 1.35fr 1fr;
         gap: 40px;
     }
 
@@ -299,7 +316,7 @@
 }
 
 @media (max-width: 991px) {
-    .spFooterInner{
+    .spFooterInner {
         padding: 96px 0 25px;
     }
 }
@@ -335,10 +352,21 @@
     } */
 
     .spFooterColumns {
+        display: flex;
         flex-direction: column;
         gap: 48px;
         margin-bottom: 64px;
         margin-top: 70px;
+    }
+
+    .spFooterRecognition {
+        margin: 48px 0 56px;
+        width: 100%;
+    }
+
+    .spFooterRecognitionRow {
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .spFooterColumnTitle {
@@ -348,7 +376,8 @@
     .spFooterLinkList {
         gap: 18px;
     }
-    .spFooterLinkList li{
+
+    .spFooterLinkList li {
         height: 1.15em;
     }
 

@@ -29,7 +29,15 @@ export default function BestsellingProducts({ id, data }) {
 
   useEffect(() => {
     const updateVisibleCount = () => {
-      setVisibleCount(window.innerWidth <= 700 ? 1 : 3);
+      const nextVisibleCount =
+        window.innerWidth <= 768 ? 1 : window.innerWidth <= 1199 ? 2 : 3;
+
+      setVisibleCount((current) => {
+        if (current !== nextVisibleCount) {
+          setSlideIndex(0);
+        }
+        return nextVisibleCount;
+      });
     };
 
     updateVisibleCount();
@@ -58,6 +66,9 @@ export default function BestsellingProducts({ id, data }) {
 
   const maxSlideIndex = Math.max(products.length - visibleCount, 0);
   const currentSlideIndex = Math.min(slideIndex, maxSlideIndex);
+  const slideOffset = `calc(-${currentSlideIndex * (100 / visibleCount)}% - ${
+    currentSlideIndex * (25 / visibleCount)
+  }px)`;
   const moveSlide = (direction) => {
     setSlideIndex((current) =>
       Math.max(0, Math.min(current + direction, maxSlideIndex))
@@ -103,7 +114,7 @@ export default function BestsellingProducts({ id, data }) {
         <div className="bestselling-products__viewport">
           <div
             className="bestselling-products__track"
-            style={{ transform: `translateX(-${currentSlideIndex * (100 / visibleCount)}%)` }}
+            style={{ transform: `translateX(${slideOffset})` }}
           >
             {products.map((product) => (
               <article className="bestselling-product-card" key={product.id}>

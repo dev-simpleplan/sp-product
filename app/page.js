@@ -32,7 +32,10 @@ export default function Home() {
   const [error, setError] = useState(null);
 
   const freeGuidePreFooter = useMemo(
-    () => (freeGuide ? { ...freeGuide, variant: "newsletter" } : null),
+    () =>
+      freeGuide
+        ? { ...freeGuide, variant: "newsletter", submit_text: "Get Free Guide" }
+        : null,
     [freeGuide]
   );
   useSetPreFooter(freeGuidePreFooter);

@@ -34,7 +34,8 @@ export default function ProductHomeBanner({ id, data }) {
 
   return (
     <section className="product-home-banner" id={id}>
-      <div className="product-home-banner__frame">
+      <div className="container">
+      <div className="product-home-banner__frame gap-left">
         <div className="product-home-banner__content">
           <h1 className="reveal-heading">{data.title}</h1>
           <p className="product-home-banner__text">{data.text}</p>
@@ -70,6 +71,7 @@ export default function ProductHomeBanner({ id, data }) {
             onLoad={() => setIsLoaded(true)}
           />
         </div>
+      </div>
       </div>
     </section>
   );

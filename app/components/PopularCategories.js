@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getImageUrl } from "./getImageUrl";
 
 const previousIcon = (
@@ -32,13 +32,46 @@ export default function PopularCategories({ id, data }) {
   const categories = useMemo(() => data?.categories || [], [data]);
   const [slideIndex, setSlideIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(3);
+  const [slideOffset, setSlideOffset] = useState(0);
+  const trackRef = useRef(null);
 
   useEffect(() => {
-    const updateVisibleCount = () => setVisibleCount(window.innerWidth <= 700 ? 1 : 3);
+    const updateVisibleCount = () => {
+      const nextVisibleCount =
+        window.innerWidth <= 768 ? 1 : window.innerWidth <= 1199 ? 2 : 3;
+
+      setVisibleCount((current) => {
+        if (current !== nextVisibleCount) {
+          setSlideIndex(0);
+        }
+        return nextVisibleCount;
+      });
+    };
     updateVisibleCount();
     window.addEventListener("resize", updateVisibleCount);
     return () => window.removeEventListener("resize", updateVisibleCount);
   }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return undefined;
+
+    const updateOffset = () => {
+      const firstCard = track.querySelector(".popular-category-card");
+      if (!firstCard) return;
+
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      setSlideOffset(
+        Math.min(slideIndex, Math.max(categories.length - visibleCount, 0)) *
+          (firstCard.getBoundingClientRect().width + gap)
+      );
+    };
+
+    updateOffset();
+    const resizeObserver = new ResizeObserver(updateOffset);
+    resizeObserver.observe(track);
+    return () => resizeObserver.disconnect();
+  }, [categories.length, slideIndex, visibleCount]);
 
   if (!data || !categories.length) return null;
 
@@ -60,9 +93,10 @@ export default function PopularCategories({ id, data }) {
 
           <div className="popular-categories__viewport">
             <div
+              ref={trackRef}
               className="popular-categories__track"
               style={{
-                transform: `translateX(-${currentSlideIndex * (100 / visibleCount)}%)`,
+                transform: `translateX(-${slideOffset}px)`,
               }}
             >
               {categories.map((category) => (

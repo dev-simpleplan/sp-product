@@ -143,6 +143,11 @@ li {
   margin-bottom: 100px;
 }
 
+section#product-home-about .heading {
+  margin-bottom: 0px;
+  max-width: 60ch;
+}
+
 .custom-btn {
   font-weight: 500;
   font-size: 14px;
@@ -167,6 +172,7 @@ li {
 .custom-btn:hover {
   background: transparent;
   color: #fff;
+  border: 1px solid #fff;
 }
 
 /* .custom-btn:hover::after {

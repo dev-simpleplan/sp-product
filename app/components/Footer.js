@@ -42,17 +42,22 @@ export default function Footer() {
     {
       id: "pages",
       title: "Pages",
-      links: footerData?.pages_menu || [],
-    },
-    {
-      id: "about",
-      title: "About",
-      links: footerData?.about_menu || [],
+      links: [
+        { id: "privacy", item_name: "Privacy Policy", item_link: "/privacy-policy" },
+        { id: "terms", item_name: "Terms & Conditions", item_link: "#" },
+      ],
     },
     {
       id: "socials",
       title: "Socials",
-      links: footerData?.social_link_menu || [],
+      links: [
+        { id: "instagram", item_name: "Instagram", item_link: "https://www.instagram.com/simpleplanmedia/?hl=en" },
+        { id: "twitter", item_name: "Twitter", item_link: "https://twitter.com/simpleplanmedia" },
+        { id: "linkedin", item_name: "LinkedIn", item_link: "https://www.linkedin.com/company/simpleplan-media/" },
+        { id: "youtube", item_name: "YouTube", item_link: "https://www.youtube.com/@simpleplanmedia" },
+        { id: "behance", item_name: "Behance", item_link: "https://www.behance.net/simpleplanmedia" },
+        { id: "dribbble", item_name: "Dribbble", item_link: "https://dribbble.com/simpleplanmedia" },
+      ],
     },
   ];
 
@@ -151,6 +156,8 @@ export default function Footer() {
             </div>
           </div>
 
+          <FooterRecognition />
+
           <div className={styles.spFooterBottom}>
             <p className={styles.spFooterCopyright}>
               <span className={styles.spCopyrightIcon}>&#169;</span>
@@ -163,6 +170,19 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterRecognition() {
+  return (
+    <div className={styles.spFooterRecognition} aria-label="Awards and reviews">
+      <Image
+        src="/images/footer-recognition.png"
+        alt="SimplePlan Media awards and reviews"
+        width={1472}
+        height={704}
+      />
+    </div>
   );
 }
 
@@ -193,7 +213,7 @@ function NewsletterPreFooter({ data }) {
 
       <form className={styles.spNewsletterForm} onSubmit={handleSubmit}>
         <label htmlFor="footer-newsletter-email" className={styles.spNewsletterLabel}>
-          Please reach me at
+        {data?.form_sub_text || "Please reach me at"}
         </label>
         <div className={styles.spNewsletterField}>
           <input
@@ -205,8 +225,8 @@ function NewsletterPreFooter({ data }) {
             onChange={(e) => setEmail(e.target.value)}
             className={styles.spNewsletterInput}
           />
-          <button type="submit" className={styles.spNewsletterSubmit}>
-            <span>Subscribe</span>
+          <button type="submit" className={`${styles.spNewsletterSubmit} custom-btn`}>
+            <span>{data?.submit_text || "Subscribe"}</span>
             <span className="arrow-wrap">
               <svg className="arrow arrow-1" width="12" height="12" viewBox="0 0 12 12" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
