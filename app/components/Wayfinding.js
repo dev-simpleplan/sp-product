@@ -163,7 +163,9 @@ export default function Wayfinding({ sections = [], id, theme = "dark" }) {
 
   return (
     <nav
-      className={`${styles.spWayfinding} ${theme === "light" ? styles.spWayfindingLight : ""} side-rail`}
+      className={`${styles.spWayfinding} ${
+        theme === "light" ? styles.spWayfindingLight : ""
+      } ${theme === "product-contact" ? styles.spWayfindingProductContact : ""} side-rail`}
       aria-label="Page sections"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

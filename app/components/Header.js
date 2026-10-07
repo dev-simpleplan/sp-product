@@ -103,10 +103,10 @@ const PRODUCT_SHOP_COLUMNS = [
 
 const PRODUCT_SHOP_CTA = {
   label: "Shop All Products",
-  href: "#",
+  href: "/shop",
 };
 
-const PRODUCT_ABOUT_LINK = "/product/about";
+const PRODUCT_ABOUT_LINK = "/about";
 
 function isPlaceholderLink(link) {
   return !link || link === "#" || link === "#!";
@@ -116,9 +116,19 @@ function normalizeLink(link, fallback) {
   return isPlaceholderLink(link) ? fallback : link;
 }
 
+function productMenuLink(link, id, fallback = "#") {
+  return normalizeLink(link, id ? `/category/${id}` : fallback);
+}
+
 export default function Header() {
   const pathname = usePathname();
-  const isProductHeader = pathname === "/" || pathname?.startsWith("/product");
+  const isProductHeader =
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/shop" ||
+    pathname === "/contact" ||
+    pathname === "/privacy-policy" ||
+    pathname?.startsWith("/category");
 
   // Pages that get the white header + black logo. This is an ALLOWLIST —
   // only pages listed here (or nested under them) get the white treatment;
@@ -128,7 +138,7 @@ export default function Header() {
   // const whiteHeaderRoutes = ["/our-work"];
   // Prefix matches: the route itself AND everything nested under it, e.g.
   // "/work" here covers /work/project-name for every individual work page.
-  const whiteHeaderPrefixes = ["/work", "/contact", "/privacy-policy"];
+  const whiteHeaderPrefixes = ["/contact", "/privacy-policy"];
   const isInnerPage =
     // whiteHeaderRoutes.includes(pathname) ||
     whiteHeaderPrefixes.some(
@@ -172,7 +182,9 @@ export default function Header() {
   const aboutUsLabel = isProductHeader ? "About Us" : aboutUsMenu?.page_name || "About Us";
   const ourWorkLabel = ourWorkMenu?.page_name || "Our Work";
   const ourWorkLink = normalizeLink(ourWorkMenu?.page_url, "/our-work");
-  const ctaLink = normalizeLink(headerData?.cta_link, "/contact");
+  const ctaLink = isProductHeader
+    ? "/contact"
+    : normalizeLink(headerData?.cta_link, "/contact");
   const ctaText = headerData?.cta_text || "Book A Call";
   // MainLogo is a static-import object ({src, width, height, ...}), not a
   // plain URL string — these render as a plain <img>, not next/image's
@@ -578,13 +590,13 @@ useEffect(() => {
             <div className={styles.spMegaMenuColumns}>
               {whatWeDoColumns.map((column) => (
                 <div className={styles.spMegaMenuColumn} key={column.id}>
-                  <a href={column.page_url || "#"} className={styles.spMegaMenuColumnTitle}>
+                  <a href={isProductHeader ? productMenuLink(column.page_url, column.id) : (column.page_url || "#")} className={styles.spMegaMenuColumnTitle}>
                     <span>{column.page_name}</span>
                   </a>
                   <ul className={styles.spMegaMenuLinkList}>
                     {(column.sub_pages || []).map((sub) => (
                       <li key={sub.id}>
-                        <a href={sub.page_url || "#"} className={styles.spMegaMenuLink}>
+                        <a href={isProductHeader ? productMenuLink(sub.page_url, sub.id) : (sub.page_url || "#")} className={styles.spMegaMenuLink}>
                             <span>{sub.page_name}</span>
                         </a>
                       </li>
@@ -772,7 +784,7 @@ useEffect(() => {
             <div className={styles.spMobileSubList}>
               {whatWeDoColumns.map((column) => (
                 <div className={styles.spMobileGroup} key={column.id}>
-                  <a href={column.page_url || "#"} className={styles.spMobileGroupTitle}>
+                  <a href={isProductHeader ? productMenuLink(column.page_url, column.id) : (column.page_url || "#")} className={styles.spMobileGroupTitle}>
                     <span>{column.page_name}</span>
                     <span className={styles.spMobileChevron}>
                       {CHEVRON_RIGHT}
@@ -782,7 +794,7 @@ useEffect(() => {
                     {(column.sub_pages || []).map((sub) => (
                       <li key={sub.id}>
                         <a
-                          href={sub.page_url || "#"}
+                          href={isProductHeader ? productMenuLink(sub.page_url, sub.id) : (sub.page_url || "#")}
                           className={styles.spMobileGroupLink}
                           onClick={closeMobileMenu}
                         >

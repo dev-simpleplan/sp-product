@@ -12,7 +12,7 @@
 /* ── Hero: heading + tabbed form ── */
 .contact-hero {
   background-color: #fff;
-  padding: 140px 0 100px;
+  padding: 200px 0 100px;
 }
 
 .contact-hero-grid {
@@ -26,16 +26,16 @@
   font-family: var(--newsreader);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(32px, 3.4vw, 56px);
-  line-height: 1.15;
+  font-size: clamp(32px, 3.89vw, 56px);
+  line-height: 110%;
   color: #111;
   max-width: 12ch;
 }
 
 .contact-hero-subtext {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 150%;
-  color: #6a6a6a;
+  color: #535353;
   max-width: 36ch;
   margin: 0;
 }
@@ -75,7 +75,7 @@
 
 .contact-field {
   border-bottom: 1px solid #e5e5e5;
-  padding: 18px 0;
+  padding: 18px 0 8px;
 }
 
 .contact-field:first-of-type {
@@ -85,8 +85,8 @@
 .contact-label {
   display: block;
   font-size: 13px;
-  color: #888;
-  margin-bottom: 6px;
+  color: #535353;
+  margin-bottom: 10px;
 }
 
 .contact-input,
@@ -220,17 +220,17 @@
 
 /* ── Submit ── */
 .contact-submit-btn {
-  margin-top: 32px;
-  width: 100%;
-  justify-content: center;
-  background: #111;
   color: #fff;
-  border: 1px solid #111;
-  padding: 18px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 2px;
   cursor: pointer;
+  background: #111;
+  border: 1px solid #111;
+  justify-content: center;
+  width: 100%;
+  margin-top: 32px;
+  padding: 18px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /* .custom-btn's default hover (background: transparent, color: #fff) reads
@@ -239,6 +239,7 @@
 .contact-submit-btn:hover {
   background: transparent;
   color: #111;
+  border: 1px solid #111;
 }
 
 .contact-submit-btn:disabled {
@@ -284,7 +285,12 @@
   gap: 40px;
 }
 
-.next-step-card{
+#product-contact-next-steps .next-steps-grid,
+#product-contact-find-us .find-us-grid {
+  margin-top: 100px;
+}
+
+.next-step-card {
   display: flex;
   flex-direction: column;
   gap: 46px;
@@ -338,7 +344,7 @@
   padding-top: 32px;
 }
 
-.find-us-block{
+.find-us-block {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -354,10 +360,11 @@
   line-height: 150%;
   margin: 0;
 }
+
 .find-us-heading {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing:2px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   /* margin: 0 0 8px; */
 }
@@ -368,6 +375,7 @@
 
 /* ── Responsive ── */
 @media screen and (max-width: 1024px) {
+
   .contact-hero-grid,
   .find-us-grid {
     grid-template-columns: 1fr;
@@ -377,7 +385,8 @@
     grid-template-columns: 1fr;
     gap: 56px;
   }
-  .next-step-card{
+
+  .next-step-card {
     gap: 20px;
   }
 
@@ -396,7 +405,7 @@
     padding: 110px 0 64px;
   }
 
-  .contact-hero-subtext{
+  .contact-hero-subtext {
     font-size: 16px;
   }
 
@@ -413,33 +422,35 @@
   .contact-find-us {
     padding: 70px 0;
   }
-  
+
   .contact-section-subtext,
   .next-step-card p,
   .find-us-block .find-us-para,
-  .find-us-block a{
+  .find-us-block a {
     font-size: 16px;
   }
 
-  .next-step-icon{
+  .next-step-icon {
     width: 64px;
   }
 
-  .contact-find-us .contact-container{
+  .contact-find-us .contact-container {
     gap: 20px;
   }
 
-  .find-us-info{
+  .find-us-info {
     padding-top: 0;
   }
-  
+
 }
+
 @media screen and (max-width: 479px) {
-  .contact-tabs{
+  .contact-tabs {
     display: flex;
     justify-content: space-between;
   }
-  .contact-tab{
+
+  .contact-tab {
     width: 100%;
     height: 100%;
     aspect-ratio: 1/1;

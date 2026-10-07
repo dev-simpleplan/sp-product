@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import ProductHomeBanner from "./components/ProductHomeBanner";
 import ProductStats from "./components/ProductStats";
-import BestsellingProducts from "./components/BestsellingProducts";
+import HomeBestsellingProducts from "./components/HomeBestsellingProducts";
 import TestimonialSection from "./components/TestimonialSection";
 import PopularCategories from "./components/PopularCategories";
 import OurApproach from "./components/OurApproach";
@@ -15,6 +15,7 @@ import Initiatives from "./components/company/Initiatives";
 import RightSideLine from "./components/RightSideLine";
 import Wayfinding from "./components/Wayfinding";
 import { useSetPreFooter } from "./context/PreFooterContext";
+import LoadingScreen from "./components/LoadingScreen";
 
 export default function Home() {
   const [banner, setBanner] = useState(null);
@@ -121,19 +122,7 @@ export default function Home() {
   );
 
   if (loading) {
-    return (
-      <div className="loading">
-        <div className="loadingIn">
-          <div className="loadingText">
-            {"LOADING".split("").map((letter) => (
-              <span key={letter} data-text={letter}>
-                {letter}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error || !banner) {
@@ -146,7 +135,7 @@ export default function Home() {
       <RightSideLine id="rightLine" />
       <ProductHomeBanner id="product-home-hero" data={banner} />
       <ProductStats id="product-home-stats" stats={stats} />
-      <BestsellingProducts id="product-home-bestsellers" data={bestsellingProducts} />
+      <HomeBestsellingProducts id="product-home-bestsellers" data={bestsellingProducts} />
       <TestimonialSection
         id="product-home-testimonials"
         data={testimonials}

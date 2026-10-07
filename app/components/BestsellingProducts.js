@@ -3,6 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getImageUrl } from "./getImageUrl";
 
+function richTextToString(value) {
+  if (typeof value === "string") return value;
+  if (!Array.isArray(value)) return "";
+
+  return value
+    .map((block) =>
+      (block.children || []).map((child) => child.text || "").join("")
+    )
+    .filter(Boolean)
+    .join(" ");
+}
+
 const ARROW_LEFT = (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="m15 18-6-6 6-6" />
@@ -17,14 +29,18 @@ const ARROW_RIGHT = (
 
 export default function BestsellingProducts({ id, data }) {
   const categories = useMemo(() => data?.products_type || [], [data]);
-  const [activeCategory, setActiveCategory] = useState(0);
   const [slideIndex, setSlideIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(3);
-  const tabsRef = useRef(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+  const cursorRef = useRef(null);
+  const viewportRef = useRef(null);
+  const mousePos = useRef({ x: 0, y: 0 });
+  const cursorPos = useRef({ x: 0, y: 0 });
+  const activeCard = useRef(null);
+  const rafId = useRef(null);
+  const isCursorActive = useRef(false);
   const products = useMemo(
-    () => categories[activeCategory]?.products || [],
-    [activeCategory, categories]
+    () => categories[0]?.products || [],
+    [categories]
   );
 
   useEffect(() => {
@@ -46,21 +62,49 @@ export default function BestsellingProducts({ id, data }) {
   }, []);
 
   useEffect(() => {
-    const updateIndicator = () => {
-      const activeTab = tabsRef.current?.querySelector(".is-active");
-      const tabs = tabsRef.current;
-      if (!activeTab || !tabs) return;
+    const viewport = viewportRef.current;
+    const cursor = cursorRef.current;
+    if (!viewport || !cursor) return;
 
-      setIndicator({
-        left: activeTab.offsetLeft,
-        width: activeTab.offsetWidth,
-      });
+    const updateCursorPosition = () => {
+      const card = activeCard.current;
+      if (!isCursorActive.current || !card) {
+        rafId.current = requestAnimationFrame(updateCursorPosition);
+        return;
+      }
+
+      const bounds = viewport.getBoundingClientRect();
+      const cardBounds = card.getBoundingClientRect();
+      const isPointerInsideCard =
+        mousePos.current.x >= cardBounds.left &&
+        mousePos.current.x <= cardBounds.right &&
+        mousePos.current.y >= cardBounds.top &&
+        mousePos.current.y <= cardBounds.bottom;
+
+      if (!isPointerInsideCard) {
+        isCursorActive.current = false;
+        cursor.classList.remove("active");
+        rafId.current = requestAnimationFrame(updateCursorPosition);
+        return;
+      }
+
+      const targetX = mousePos.current.x - bounds.left - 75;
+      const targetY = mousePos.current.y - bounds.top - 75;
+      const ease = 0.3;
+
+      cursorPos.current.x += (targetX - cursorPos.current.x) * ease;
+      cursorPos.current.y += (targetY - cursorPos.current.y) * ease;
+      cursor.style.transform = `translate3d(${cursorPos.current.x}px, ${cursorPos.current.y}px, 0)`;
+      rafId.current = requestAnimationFrame(updateCursorPosition);
     };
+    rafId.current = requestAnimationFrame(updateCursorPosition);
 
-    updateIndicator();
-    window.addEventListener("resize", updateIndicator);
-    return () => window.removeEventListener("resize", updateIndicator);
-  }, [activeCategory, categories]);
+    return () => {
+      isCursorActive.current = false;
+      activeCard.current = null;
+      cancelAnimationFrame(rafId.current);
+    };
+  }, []);
 
   if (!data || !categories.length) return null;
 
@@ -75,76 +119,71 @@ export default function BestsellingProducts({ id, data }) {
     );
   };
 
-  const selectCategory = (index) => {
-    setActiveCategory(index);
-    setSlideIndex(0);
-  };
-
   return (
     <section className="bestselling-products" id={id}>
       <div className="container">
-      <div className="bestselling-products__inner gap-left">
+      <div className="bestselling-products__inner">
         <h2 className="reveal-heading">{data.title || "Our Bestselling Products"}</h2>
+        {(data.subtitle || data.sub_title || data.tagline || data.description) && (
+          <p className="bestselling-products__subtitle split-reveal">
+            {richTextToString(
+              data.subtitle || data.sub_title || data.tagline || data.description
+            )}
+          </p>
+        )}
 
-        <div
-          className="bestselling-products__tabs"
-          ref={tabsRef}
-          role="tablist"
-          aria-label="Product categories"
-        >
-          <span
-            className="bestselling-products__tab-indicator"
-            style={{ left: indicator.left, width: indicator.width }}
-            aria-hidden="true"
-          />
-          {categories.map((category, index) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeCategory === index}
-              className={activeCategory === index ? "is-active" : ""}
-              key={category.id}
-              onClick={() => selectCategory(index)}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="bestselling-products__viewport">
+        <div className="bestselling-products__viewport" ref={viewportRef}>
           <div
             className="bestselling-products__track"
             style={{ transform: `translateX(${slideOffset})` }}
           >
             {products.map((product) => (
-              <article className="bestselling-product-card" key={product.id}>
+              <a
+                className="bestselling-product-card"
+                href={product.cta_link && product.cta_link !== "#" ? product.cta_link : "#"}
+                key={product.id}
+                onMouseEnter={(event) => {
+                  const viewport = viewportRef.current;
+                  if (!viewport) return;
+                  const bounds = viewport.getBoundingClientRect();
+                  mousePos.current = { x: event.clientX, y: event.clientY };
+                  activeCard.current = event.currentTarget;
+                  isCursorActive.current = true;
+                  cursorRef.current?.classList.add("active");
+                  cursorPos.current = {
+                    x: event.clientX - bounds.left - 75,
+                    y: event.clientY - bounds.top - 75,
+                  };
+                  cursorRef.current.style.transform = `translate3d(${cursorPos.current.x}px, ${cursorPos.current.y}px, 0)`;
+                }}
+                onMouseMove={(event) => {
+                  mousePos.current = { x: event.clientX, y: event.clientY };
+                }}
+                onMouseLeave={() => {
+                  isCursorActive.current = false;
+                  activeCard.current = null;
+                  cursorRef.current?.classList.remove("active");
+                }}
+              >
               <div className="bestselling-product-card__image">
                 {product.image && (
                   <img
                     src={getImageUrl(product.image)}
                     alt={product.image.alternativeText || product.title || "Product"}
+                    draggable={false}
                   />
                 )}
               </div>
-              <div className="bestselling-product-card__rating">★ {product.rating || "4.9"}</div>
+              <div className="bestselling-product-card__rating">
+                <span aria-label="5 out of 5 stars">★★★★★</span> <small>({product.review_count || 47})</small>
+              </div>
               <h3>{product.title}</h3>
               <p className="bestselling-product-card__price">{product.price}</p>
-              <a
-                href={product.cta_link && product.cta_link !== "#" ? product.cta_link : "#"}
-                className="bestselling-product-card__cta custom-btn"
-              >
-                <span>{product.cta_text || "View Product"}</span>
-                <span className="arrow-wrap" aria-hidden="true">
-                  <svg className="arrow arrow-1" viewBox="0 0 12 12" fill="none">
-                    <path d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z" fill="currentColor" />
-                  </svg>
-                  <svg className="arrow arrow-2" viewBox="0 0 12 12" fill="none">
-                    <path d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z" fill="currentColor" />
-                  </svg>
-                </span>
               </a>
-              </article>
             ))}
+          </div>
+          <div ref={cursorRef} className="ttb-drag-cursor bestselling-view-cursor" aria-hidden="true">
+            <div className="custom-cursor">View<br />Product</div>
           </div>
         </div>
 

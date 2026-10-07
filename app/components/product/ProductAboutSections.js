@@ -3,16 +3,31 @@
 import { getImageUrl } from "../common/getImageUrl";
 
 function richText(block) {
-  return block?.[0]?.children
-    ?.map((child) => (child.type === "text" ? child.text : ""))
-    .join("");
+  return block
+    ?.map((paragraph) =>
+      (paragraph.children || [])
+        .map((child) => (child.type === "text" ? child.text : ""))
+        .join("")
+    )
+    .filter(Boolean)
+    .join("\n");
 }
 
 function Arrow() {
   return (
     <span className="arrow-wrap" aria-hidden="true">
-      <span className="arrow arrow-1">↗</span>
-      <span className="arrow arrow-2">↗</span>
+      <svg className="arrow arrow-1" viewBox="0 0 12 12" fill="none">
+        <path
+          d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+          fill="currentColor"
+        />
+      </svg>
+      <svg className="arrow arrow-2" viewBox="0 0 12 12" fill="none">
+        <path
+          d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+          fill="currentColor"
+        />
+      </svg>
     </span>
   );
 }
@@ -26,7 +41,7 @@ export function ProductIntro({ id, data }) {
         <div className="product-intro__inner gap-left">
           <div>
             <p className="product-eyebrow">{data.tagline}</p>
-            <h2>{data.title}</h2>
+            <h2 className="reveal-heading">{data.title}</h2>
           </div>
           <div className="product-intro__body">
             <p>{richText(data.description)}</p>
@@ -61,7 +76,7 @@ export function ProductDeliverables({ id, data }) {
       <div className="container">
         <div className="product-deliverables__heading gap-left">
           <p className="product-eyebrow">{data.tagline}</p>
-          <h2>{data.title}</h2>
+          <h2 className="reveal-heading">{data.title}</h2>
         </div>
         <div className="product-deliverables__grid gap-left">
           {data.deliverables?.map((item) => (
@@ -93,20 +108,31 @@ export function ProductFeature({ id, data }) {
     <section className="product-feature" id={id}>
       <div className="container">
         <div className="product-feature__inner gap-left">
+          <div className="product-feature__intro">
+            <h2 className="reveal-heading">{data.title}</h2>
+            {data.text && <p className="split-reveal">{data.text}</p>}
+          </div>
+          {data.image && (
+            <div className="product-feature__media">
+              <img
+                src={getImageUrl(data.image, "large")}
+                alt={data.image.alternativeText || data.product_name || "Product"}
+                draggable={false}
+              />
+            </div>
+          )}
           <div className="product-feature__copy">
-            <p className="product-eyebrow">{data.tagline}</p>
-            <h2>{data.title}</h2>
-            <p>{richText(data.product_description) || data.text}</p>
+            {data.product_name && <h3>{data.product_name}</h3>}
+            {data.product_description && (
+              <p className="split-reveal">{richText(data.product_description)}</p>
+            )}
             {data.cta_link && (
               <a href={data.cta_link} className="custom-btn">
-                <span>{data.cta_text}</span>
+                <span>{data.cta_text || "Explore Our Apps"}</span>
                 <Arrow />
               </a>
             )}
           </div>
-          {data.image && (
-            <img src={getImageUrl(data.image)} alt={data.image.alternativeText || data.product_name || "Product"} />
-          )}
         </div>
       </div>
     </section>
@@ -122,7 +148,7 @@ export function ProductBrands({ id, data }) {
       <div className="container">
         <div className="product-brands__inner gap-left">
           <p className="product-eyebrow">{data.tagline}</p>
-          <p className="product-brands__description">{data.description}</p>
+          <p className="product-brands__description split-reveal">{data.description}</p>
           <div className="product-brands__logos">
             {logos.map((logo) => (
               <img key={logo.id} src={getImageUrl(logo)} alt={logo.alternativeText || logo.name || "Trusted brand"} />

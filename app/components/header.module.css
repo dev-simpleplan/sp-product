@@ -1275,6 +1275,22 @@
     background-color: #ffffff;
 }
 
+/* Keep the product contact page's offer bar on the product red theme while
+   the navigation below it uses the white inner-page treatment. */
+.spHeaderWhite .spOfferBar {
+    color: #ffffff;
+    background-color: var(--sp-red);
+}
+
+.spHeaderWhite .spOfferBar strong,
+.spHeaderWhite .spOfferBar b {
+    color: #ffffff;
+}
+
+.spHeaderWhite .spOfferBar>span:nth-child(2) {
+    color: #ffffff;
+}
+
 /* Header bar background */
 .spHeaderWhite .spHeaderBar {
     background-color: #ffffff;

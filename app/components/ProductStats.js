@@ -93,7 +93,7 @@ export default function ProductStats({ id, stats = [] }) {
               <h2 data-counter-value>
                 {item?.numbertext ?? item?.number}
               </h2>
-              <p>{item?.textbelownumber ?? item?.text}</p>
+              <p className="split-reveal">{item?.textbelownumber ?? item?.text}</p>
             </div>
           ))}
         </div>

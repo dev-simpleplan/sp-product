@@ -9,36 +9,37 @@ const extractText = (description = []) =>
   description.map((block) => (block.children || []).map((c) => c.text).join("")).join("\n");
 
 const Card = ({ b }) => {
-  const content = (
-    <>
+  return (
+    <article
+      className="block-box"
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
+    >
       <div className="bb-top">
         <img
           src={getImageUrl(b.image)}
-          alt={b.title}
+          alt={b.image?.alternativeText || b.title}
           className="img"
           draggable={false}
           onDragStart={(e) => e.preventDefault()}
         />
       </div>
-      <h4>{b.title}</h4>
-      <p>{extractText(b.description)}</p>
-    </>
+      <div className="block-box-content">
+        <h4>{b.title}</h4>
+        <p>{extractText(b.description)}</p>
+        {b.cta_link && (
+          <a
+            href={b.cta_link}
+            className="block-box-cta"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+          >
+            <span>{b.cta_text || "Learn More"}</span>
+          </a>
+        )}
+      </div>
+    </article>
   );
-
-  if (b.cta_link) {
-    return (
-      <a
-        href={b.cta_link}
-        className="block-box"
-        draggable={false}
-        onDragStart={(e) => e.preventDefault()}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return <div className="block-box">{content}</div>;
 };
 
 export default function WhatWeDeliver({ id, data }) {
@@ -145,7 +146,7 @@ export default function WhatWeDeliver({ id, data }) {
       slider.removeEventListener("mousemove", onMouseMove);
       slider.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [showDragCursor]);
+  }, [showDragCursor, updateCursorPosition]);
 
   if (!data) return null;
 
@@ -161,9 +162,10 @@ export default function WhatWeDeliver({ id, data }) {
         <div className="our-approach-in gap-left pr0">
           {isSlider ? (
             <div
-  className={`block-box-swiper project-delievered-slider no-select${showDragCursor ? " has-custom-cursor" : ""}`}
-  ref={sliderRef}
->
+              className={`block-box-swiper project-delievered-slider no-select${showDragCursor ? " has-custom-cursor" : ""}`}
+              ref={sliderRef}
+              onDragStart={(event) => event.preventDefault()}
+            >
               {showDragCursor && (
                 <div ref={cursorRef} className="ttb-drag-cursor">
                   <div className="custom-cursor">
@@ -173,44 +175,44 @@ export default function WhatWeDeliver({ id, data }) {
               )}
 
               <Swiper
-  onSwiper={(swiper) => (swiperRef.current = swiper)}
-  modules={[Mousewheel, FreeMode]}
-  simulateTouch={false}
-  mousewheel={{
-    forceToAxis: true, // only react to horizontal wheel/trackpad movement
-    sensitivity: 1,
-    releaseOnEdges: true, // let vertical page scroll take over at the ends
-  }}
-  freeMode={{
-    enabled: true,
-    momentum: true, // keeps gliding after you stop swiping, like mobile
-    momentumRatio: 1,
-    momentumBounceRatio: 1,
-    sticky: true, // settles neatly on a card once it stops, instead of a mid-scroll gap
-  }}
-  resistance
-  resistanceRatio={0.85}
-  grabCursor={false}
-  allowTouchMove={blocks.length > 2}
-  watchOverflow={false}
-  loop={false}
-  rewind={true}
-  centeredSlides={false}
-  breakpoints={{
-    0: {
-      slidesPerView: 1,
-      spaceBetween: 10,
-    },
-    768: {
-      slidesPerView: 2,
-      spaceBetween: 12,
-    },
-    1200: {
-      slidesPerView: 2.75,
-      spaceBetween: 15,
-    },
-  }}
->
+                onSwiper={(swiper) => (swiperRef.current = swiper)}
+                modules={[Mousewheel, FreeMode]}
+                simulateTouch
+                mousewheel={{
+                  forceToAxis: true,
+                  sensitivity: 1,
+                  releaseOnEdges: true,
+                }}
+                freeMode={{
+                  enabled: true,
+                  momentum: true,
+                  momentumRatio: 1,
+                  momentumBounceRatio: 1,
+                  sticky: true,
+                }}
+                resistance
+                resistanceRatio={0.85}
+                grabCursor={false}
+                allowTouchMove={blocks.length > 2}
+                watchOverflow={false}
+                loop={false}
+                rewind={true}
+                centeredSlides={false}
+                breakpoints={{
+                  0: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                  },
+                  768: {
+                    slidesPerView: 2,
+                    spaceBetween: 12,
+                  },
+                  1200: {
+                    slidesPerView: 2.75,
+                    spaceBetween: 15,
+                  },
+                }}
+              >
                 {blocks.map((b) => (
                   <SwiperSlide key={b.id}>
                     <Card b={b} />

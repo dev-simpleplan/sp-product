@@ -30,7 +30,15 @@ export default function SellingBundles({ id, data }) {
   const [slideIndex, setSlideIndex] = useState(0);
 
   useEffect(() => {
-    const updateVisibleCount = () => setVisibleCount(window.innerWidth <= 700 ? 1 : 2);
+    const updateVisibleCount = () => {
+      const nextVisibleCount = window.innerWidth <= 768 ? 1 : 2;
+      setVisibleCount((current) => {
+        if (current !== nextVisibleCount) {
+          setSlideIndex(0);
+        }
+        return nextVisibleCount;
+      });
+    };
     updateVisibleCount();
     window.addEventListener("resize", updateVisibleCount);
     return () => window.removeEventListener("resize", updateVisibleCount);

@@ -14,6 +14,14 @@ export default function useRevealHeading() {
 
         function initRevealHeadings() {
 
+            // Remove triggers tied to the previous line elements before
+            // reverting their DOM wrappers.
+            ScrollTrigger.getAll().forEach((trigger) => {
+                if (trigger.vars.id === "revealHeading") {
+                    trigger.kill();
+                }
+            });
+
             // Revert any previous split before re-splitting — this puts
             // each heading's DOM back exactly as it was, so React never
             // sees a structure it doesn't recognize.
@@ -56,6 +64,7 @@ export default function useRevealHeading() {
                         ease: "power4.out",
 
                         scrollTrigger: {
+                            id: "revealHeading",
                             trigger: heading,
                             start: "top 85%",
                             once: true

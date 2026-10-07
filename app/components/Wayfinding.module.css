@@ -90,6 +90,17 @@
     opacity: 1;
 }
 
+/* The product contact page starts on a white form section, so its first
+   section label needs a dark contrast while the remaining wayfinding labels
+   keep their existing theme. */
+.spWayfindingProductContact .spWayfindingItem:first-child .spWayfindingLabel {
+    color: #111111;
+}
+
+.spWayfindingProductContact .spWayfindingItem:first-child .spWayfindingDotActive {
+    background-color: #111111;
+}
+
 /* Light theme — for use on white/light-background pages (e.g. the policy
    page template). The default colors above (pink line, white label) are
    tuned for the red hero sections this component was originally built

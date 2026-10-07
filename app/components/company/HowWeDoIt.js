@@ -11,7 +11,8 @@ export default function HowWeDoIt({ id, data }) {
   const standardCard = data?.standards || [];
 
   useEffect(() => {
-    if (!sectionRef.current || !standardCard.length) return;
+    const section = sectionRef.current;
+    if (!section || !standardCard.length) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -30,13 +31,15 @@ export default function HowWeDoIt({ id, data }) {
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
+          id: "howWeDoIt",
+          trigger: section,
           start: "top top",
           end: () => `+=${standardCard.length * window.innerHeight}`,
           scrub: 1,
           pin: true,
           pinSpacing: true,
           anticipatePin: 1,
+          refreshPriority: 1,
           invalidateOnRefresh: true,
         },
       });
@@ -59,19 +62,16 @@ export default function HowWeDoIt({ id, data }) {
         }
       });
 
-      ScrollTrigger.refresh();
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }, sectionRef);
 
     return () => {
-      ScrollTrigger.getAll().forEach((st) => {
-        if (st.trigger === sectionRef.current) {
-          st.kill();
-        }
-      });
+      const trigger = ScrollTrigger.getById("howWeDoIt");
+      if (trigger) trigger.kill();
 
       ctx.revert();
     };
-  }, [data]);
+  }, [data, standardCard.length]);
 
   return (
     <section
@@ -82,7 +82,7 @@ export default function HowWeDoIt({ id, data }) {
     >
       <div className="container">
         <div className="heading gap-left">
-          <h2>{data?.title}</h2>
+          <h2 className="reveal-heading">{data?.title}</h2>
         </div>
 
         <div className="cards-stage gap-left">
@@ -98,11 +98,11 @@ export default function HowWeDoIt({ id, data }) {
                 {item.number}
               </span>
 
-              <p className="standard-card-title">
+              <p className="standard-card-title split-reveal">
                 {item.title}
               </p>
 
-              <p className="standard-card-info">
+              <p className="standard-card-info split-reveal">
                 {item.description?.[0]?.children?.[0]?.text}
               </p>
             </div>
