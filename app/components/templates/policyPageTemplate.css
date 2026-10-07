@@ -1,7 +1,7 @@
 /* ── Policy page template (Privacy Policy, Terms & Conditions, …) ── */
 .policy-page {
   background-color: #fff;
-  padding: 140px 70px 60px;
+  padding: 200px 70px 60px;
 }
 
 /* No auto-centering — .gap-left (see globals.css) pushes this in from the
@@ -51,7 +51,7 @@
   padding-left: 10px;
 }
 
-.policy-description{
+.policy-description {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -82,6 +82,6 @@
 
 @media screen and (max-width: 991px) {
   .policy-page {
-    padding: 120px 24px 80px;
+    padding: 180px 24px 80px;
   }
 }

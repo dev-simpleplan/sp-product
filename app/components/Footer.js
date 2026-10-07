@@ -9,7 +9,53 @@ import axios from "axios";
 import { usePreFooterContext } from "../context/PreFooterContext";
 
 function normalizeLink(link) {
-  return !link || link === "#" || link === "#!" ? "#" : link;
+  if (!link || link === "#" || link === "#!") return "#";
+  const l = link.trim();
+
+  if (/^tel:/i.test(l)) return "tel:" + l.slice(4).replace(/[^\d+]/g, "");
+  if (/^(https?:|mailto:|\/|#)/i.test(l)) return l;
+
+  return `/${l}`;
+}
+
+function getLinkProps(href) {
+  return /^https?:/i.test(href)
+    ? { target: "_blank", rel: "noopener noreferrer" }
+    : {};
+}
+
+const pick = (list, fallback) => (list?.length ? list : fallback);
+
+const FALLBACK_PAGES = [
+  { id: "privacy", item_name: "Privacy Policy", item_link: "/privacy-policy" },
+  { id: "terms", item_name: "Terms & Conditions", item_link: "#" },
+];
+
+const FALLBACK_SOCIALS = [
+  { id: "instagram", item_name: "Instagram", item_link: "https://www.instagram.com/simpleplanmedia/?hl=en" },
+  { id: "twitter", item_name: "Twitter", item_link: "https://twitter.com/simpleplanmedia" },
+  { id: "linkedin", item_name: "LinkedIn", item_link: "https://www.linkedin.com/company/simpleplan-media/" },
+  { id: "youtube", item_name: "YouTube", item_link: "https://www.youtube.com/@simpleplanmedia" },
+  { id: "behance", item_name: "Behance", item_link: "https://www.behance.net/simpleplanmedia" },
+  { id: "dribbble", item_name: "Dribbble", item_link: "https://dribbble.com/simpleplanmedia" },
+];
+
+const FALLBACK_CONTACTS = [
+  { id: "email", item_name: "hello@simpleplanmedia.com", item_link: "mailto:hello@simpleplanmedia.com" },
+  { id: "phone", item_name: "+91 - 9811-053-528", item_link: "tel:+919811053528" },
+];
+
+function FooterLink({ link }) {
+  const href = normalizeLink(link.item_link);
+
+  return (
+    <a href={href} {...getLinkProps(href)} className={styles.spFooterLink}>
+      <span className={styles.spFooterTextWrap}>
+        <span className={styles.spFooterText1}>{link.item_name}</span>
+        <span className={styles.spFooterText2}>{link.item_name}</span>
+      </span>
+    </a>
+  );
 }
 
 export default function Footer() {
@@ -38,41 +84,27 @@ export default function Footer() {
     fetchFooterData();
   }, []);
 
-  const footerColumns = [
-    {
-      id: "pages",
-      title: "Pages",
-      links: [
-        { id: "privacy", item_name: "Privacy Policy", item_link: "/privacy-policy" },
-        { id: "terms", item_name: "Terms & Conditions", item_link: "#" },
-      ],
-    },
-    {
-      id: "socials",
-      title: "Socials",
-      links: [
-        { id: "instagram", item_name: "Instagram", item_link: "https://www.instagram.com/simpleplanmedia/?hl=en" },
-        { id: "twitter", item_name: "Twitter", item_link: "https://twitter.com/simpleplanmedia" },
-        { id: "linkedin", item_name: "LinkedIn", item_link: "https://www.linkedin.com/company/simpleplan-media/" },
-        { id: "youtube", item_name: "YouTube", item_link: "https://www.youtube.com/@simpleplanmedia" },
-        { id: "behance", item_name: "Behance", item_link: "https://www.behance.net/simpleplanmedia" },
-        { id: "dribbble", item_name: "Dribbble", item_link: "https://dribbble.com/simpleplanmedia" },
-      ],
-    },
-  ];
+  const ALLOWED_PAGE_LINKS = ["/privacy-policy", "#"];
 
-  const contactLinks = footerData?.contact_us_menu || [
-    {
-      id: "email",
-      item_name: "hello@simpleplanmedia.com",
-      item_link: "mailto:hello@simpleplanmedia.com",
-    },
-    {
-      id: "phone",
-      item_name: "+91 - 9811-053-528",
-      item_link: "tel:+919811053528",
-    },
-  ];
+const footerColumns = [
+  {
+    id: "pages",
+    title: "Pages",
+    links: pick(
+      footerData?.pages_menu?.filter((l) =>
+        ALLOWED_PAGE_LINKS.includes(normalizeLink(l.item_link))
+      ),
+      FALLBACK_PAGES
+    ),
+  },
+  {
+    id: "socials",
+    title: "Socials",
+    links: pick(footerData?.social_link_menu, FALLBACK_SOCIALS),
+  },
+];
+
+  const contactLinks = pick(footerData?.contact_us_menu, FALLBACK_CONTACTS);
 
   return (
     <footer className={styles.spFooter} data-hide-side-rails>
@@ -102,20 +134,20 @@ export default function Footer() {
               >
                 <span>{preFooter?.cta_text}</span>
                 <span className="arrow-wrap">
-                      <svg className="arrow arrow-1" width="12" height="12" viewBox="0 0 12 12" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                          <path
-                                d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
-                                fill="currentColor" />
-                      </svg>
+                  <svg className="arrow arrow-1" width="12" height="12" viewBox="0 0 12 12" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+                      fill="currentColor" />
+                  </svg>
 
-                      <svg className="arrow arrow-2" width="12" height="12" viewBox="0 0 12 12" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                          <path
-                                d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
-                                fill="currentColor" />
-                      </svg>
-                  </span>
+                  <svg className="arrow arrow-2" width="12" height="12" viewBox="0 0 12 12" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+                      fill="currentColor" />
+                  </svg>
+                </span>
               </Link>
             </div>
           )}
@@ -127,12 +159,7 @@ export default function Footer() {
                 <ul className={styles.spFooterLinkList}>
                   {column.links.map((link) => (
                     <li key={link.id}>
-                      <a href={normalizeLink(link.item_link)} className={styles.spFooterLink}>
-                        <span className={styles.spFooterTextWrap}>
-                          <span className={styles.spFooterText1}>{link.item_name}</span>
-                          <span className={styles.spFooterText2}>{link.item_name}</span>
-                      </span>
-                      </a>
+                      <FooterLink link={link} />
                     </li>
                   ))}
                 </ul>
@@ -144,12 +171,7 @@ export default function Footer() {
               <ul className={styles.spFooterLinkList}>
                 {contactLinks.map((link) => (
                   <li key={link.id}>
-                    <a href={normalizeLink(link.item_link)} className={styles.spFooterLink}>
-                      <span className={styles.spFooterTextWrap}>
-                        <span className={styles.spFooterText1}>{link.item_name}</span>
-                        <span className={styles.spFooterText2}>{link.item_name}</span>
-                      </span>
-                    </a>
+                    <FooterLink link={link} />
                   </li>
                 ))}
               </ul>
@@ -213,7 +235,7 @@ function NewsletterPreFooter({ data }) {
 
       <form className={styles.spNewsletterForm} onSubmit={handleSubmit}>
         <label htmlFor="footer-newsletter-email" className={styles.spNewsletterLabel}>
-        {data?.form_sub_text || "Please reach me at"}
+          {data?.form_sub_text || "Please reach me at"}
         </label>
         <div className={styles.spNewsletterField}>
           <input
@@ -229,16 +251,16 @@ function NewsletterPreFooter({ data }) {
             <span>{data?.submit_text || "Subscribe"}</span>
             <span className="arrow-wrap">
               <svg className="arrow arrow-1" width="12" height="12" viewBox="0 0 12 12" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                        d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
-                        fill="currentColor" />
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+                  fill="currentColor" />
               </svg>
               <svg className="arrow arrow-2" width="12" height="12" viewBox="0 0 12 12" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                        d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
-                        fill="currentColor" />
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.878125 11.6667L0 10.7885L9.53854 1.25H3.75V0H11.6667V7.91667H10.4167V2.12813L0.878125 11.6667Z"
+                  fill="currentColor" />
               </svg>
             </span>
           </button>
