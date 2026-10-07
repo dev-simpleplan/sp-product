@@ -64,8 +64,8 @@ export default function ContactPage() {
       <Wayfinding sections={contactSections} theme="product-contact" />
 
       <section className="contact-hero" id="product-contact-form">
-        <div className="contact-container gap-left">
-          <div className="contact-hero-grid">
+        <div className="contact-container">
+          <div className="contact-hero-grid gap-left">
             <div className="contact-hero-left">
               <h1 className="contact-hero-title">{form?.title}</h1>
               <p className="contact-hero-subtext">{asPlainText(form?.description)}</p>
@@ -79,12 +79,11 @@ export default function ContactPage() {
 
       <section className="contact-connection-wrap">
         <div className="contact-next-steps" id="product-contact-next-steps">
-          <div className="contact-container gap-left">
-            <div className="contact-container-head">
+          <div className="contact-container">
+            <div className="contact-container-head gap-left">
               <h2 className="contact-section-title">{simpleConnection?.title}</h2>
               <p className="contact-section-subtext">{asPlainText(simpleConnection?.description)}</p>
-            </div>
-            <div className="next-steps-grid">
+              <div className="next-steps-grid">
               {(simpleConnection?.steps || []).map((step) => (
                 <div className="next-step-card" key={step.id}>
                   <span className="next-step-icon" aria-hidden="true">
@@ -94,15 +93,15 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
+            </div>
           </div>
         </div>
 
         <div className="contact-find-us" id="product-contact-find-us">
-          <div className="contact-container gap-left">
-            <div className="contact-container-head">
+          <div className="contact-container">
+            <div className="contact-container-head gap-left">
               <h2 className="contact-section-title">{findUs?.title}</h2>
-            </div>
-            <div className="find-us-grid">
+              <div className="find-us-grid">
               <div className="find-us-map">
                 {findUs?.map_image && (
                   <img src={getImageUrl(findUs.map_image)} alt="SimplePlan Media location map" />
@@ -135,6 +134,7 @@ export default function ContactPage() {
                   )}
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
