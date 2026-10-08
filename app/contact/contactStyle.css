@@ -395,6 +395,17 @@
   }
 }
 
+@media (max-width: 991px) {
+  .next-step-card p {
+    max-width: 50ch;
+  }
+
+  #product-contact-next-steps .next-steps-grid,
+  #product-contact-find-us .find-us-grid {
+    margin-top: 80px;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .contact-container {
     padding: 0 24px;
@@ -440,6 +451,11 @@
 
   .find-us-info {
     padding-top: 0;
+  }
+
+  #product-contact-next-steps .next-steps-grid,
+  #product-contact-find-us .find-us-grid {
+    margin-top: 60px;
   }
 
 }

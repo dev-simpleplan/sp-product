@@ -5145,12 +5145,12 @@ section#product-category-bundles .selling-bundles__inner.gap-left {
   }
 
   .product-home-banner__frame {
-    min-height: calc(60svh - clamp(140px, 9.72vw, 140px));
+    min-height: 650px;
     position: relative;
   }
 
   .product-home-banner {
-    min-height: 60svh;
+    min-height: 800px;
   }
 
   .product-home-banner__visual {

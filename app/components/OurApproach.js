@@ -120,18 +120,21 @@ export default function OurApproach({ id, data }) {
   const blocks = section.cards;
 
     useEffect(() => {
-    const check = () => {
-      setIsSlider(true);
+  const check = () => {
+    setIsSlider(true);
 
-      const slidesVisible =
-        window.innerWidth >= 1200
-          ? 4
-          : window.innerWidth >= 768
-          ? 2
-          : 1;
+    const slidesVisible =
+      window.innerWidth >= 1200
+        ? 4
+        : window.innerWidth >= 768
+        ? 2
+        : 1;
 
-      setShowDragCursor(blocks.length > slidesVisible);
-    };
+    // Custom cursor sirf un devices pe jaha real mouse/trackpad hai
+    const hasMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    setShowDragCursor(hasMouse && blocks.length > slidesVisible);
+  };
 
   check();
   window.addEventListener("resize", check);
