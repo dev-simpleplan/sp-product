@@ -31,6 +31,7 @@ export default function BestsellingProducts({ id, data }) {
   const categories = useMemo(() => data?.products_type || [], [data]);
   const [slideIndex, setSlideIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(3);
+  const [hasMouse, setHasMouse] = useState(false);
   const cursorRef = useRef(null);
   const viewportRef = useRef(null);
   const mousePos = useRef({ x: 0, y: 0 });
@@ -62,49 +63,61 @@ export default function BestsellingProducts({ id, data }) {
   }, []);
 
   useEffect(() => {
-    const viewport = viewportRef.current;
-    const cursor = cursorRef.current;
-    if (!viewport || !cursor) return;
+  const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const update = () => setHasMouse(mq.matches);
 
-    const updateCursorPosition = () => {
-      const card = activeCard.current;
-      if (!isCursorActive.current || !card) {
-        rafId.current = requestAnimationFrame(updateCursorPosition);
-        return;
-      }
+  update();
+  mq.addEventListener("change", update);
 
-      const bounds = viewport.getBoundingClientRect();
-      const cardBounds = card.getBoundingClientRect();
-      const isPointerInsideCard =
-        mousePos.current.x >= cardBounds.left &&
-        mousePos.current.x <= cardBounds.right &&
-        mousePos.current.y >= cardBounds.top &&
-        mousePos.current.y <= cardBounds.bottom;
+  return () => mq.removeEventListener("change", update);
+}, []);
 
-      if (!isPointerInsideCard) {
-        isCursorActive.current = false;
-        cursor.classList.remove("active");
-        rafId.current = requestAnimationFrame(updateCursorPosition);
-        return;
-      }
+  useEffect(() => {
+  const viewport = viewportRef.current;
+  const cursor = cursorRef.current;
 
-      const targetX = mousePos.current.x - bounds.left - 75;
-      const targetY = mousePos.current.y - bounds.top - 75;
-      const ease = 0.3;
+  if (!hasMouse || !viewport || !cursor) return;
 
-      cursorPos.current.x += (targetX - cursorPos.current.x) * ease;
-      cursorPos.current.y += (targetY - cursorPos.current.y) * ease;
-      cursor.style.transform = `translate3d(${cursorPos.current.x}px, ${cursorPos.current.y}px, 0)`;
+  const updateCursorPosition = () => {
+    const card = activeCard.current;
+    if (!isCursorActive.current || !card) {
       rafId.current = requestAnimationFrame(updateCursorPosition);
-    };
-    rafId.current = requestAnimationFrame(updateCursorPosition);
+      return;
+    }
 
-    return () => {
+    const bounds = viewport.getBoundingClientRect();
+    const cardBounds = card.getBoundingClientRect();
+    const isPointerInsideCard =
+      mousePos.current.x >= cardBounds.left &&
+      mousePos.current.x <= cardBounds.right &&
+      mousePos.current.y >= cardBounds.top &&
+      mousePos.current.y <= cardBounds.bottom;
+
+    if (!isPointerInsideCard) {
       isCursorActive.current = false;
-      activeCard.current = null;
-      cancelAnimationFrame(rafId.current);
-    };
-  }, []);
+      cursor.classList.remove("active");
+      rafId.current = requestAnimationFrame(updateCursorPosition);
+      return;
+    }
+
+    const targetX = mousePos.current.x - bounds.left - 75;
+    const targetY = mousePos.current.y - bounds.top - 75;
+    const ease = 0.3;
+
+    cursorPos.current.x += (targetX - cursorPos.current.x) * ease;
+    cursorPos.current.y += (targetY - cursorPos.current.y) * ease;
+    cursor.style.transform = `translate3d(${cursorPos.current.x}px, ${cursorPos.current.y}px, 0)`;
+    rafId.current = requestAnimationFrame(updateCursorPosition);
+  };
+  rafId.current = requestAnimationFrame(updateCursorPosition);
+
+  return () => {
+    isCursorActive.current = false;
+    activeCard.current = null;
+    cursor.classList.remove("active");
+    cancelAnimationFrame(rafId.current);
+  };
+}, [hasMouse]);
 
   if (!data || !categories.length) return null;
 
@@ -143,8 +156,8 @@ export default function BestsellingProducts({ id, data }) {
                 href={product.cta_link && product.cta_link !== "#" ? product.cta_link : "#"}
                 key={product.id}
                 onMouseEnter={(event) => {
-                  const viewport = viewportRef.current;
-                  if (!viewport) return;
+                const viewport = viewportRef.current;
+                if (!hasMouse || !viewport || !cursorRef.current) return;
                   const bounds = viewport.getBoundingClientRect();
                   mousePos.current = { x: event.clientX, y: event.clientY };
                   activeCard.current = event.currentTarget;
@@ -182,9 +195,11 @@ export default function BestsellingProducts({ id, data }) {
               </a>
             ))}
           </div>
-          <div ref={cursorRef} className="ttb-drag-cursor bestselling-view-cursor" aria-hidden="true">
-            <div className="custom-cursor">View<br />Product</div>
-          </div>
+          {hasMouse && (
+                <div ref={cursorRef} className="ttb-drag-cursor bestselling-view-cursor" aria-hidden="true">
+                  <div className="custom-cursor">View<br />Product</div>
+                </div>
+              )}
         </div>
 
         {products.length > visibleCount && (

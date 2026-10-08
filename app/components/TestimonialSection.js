@@ -33,7 +33,9 @@ export default function TestimonialSection({
   return (
     <section className={`testimonial-section ${productVariant ? "testimonial-section--product" : ""}`} id={id}>
       <div className="container">
-      {testimonialTicker && !isMobile && (
+      {testimonialTicker && (
+        <div className={productVariant ? "gap-left" : undefined}>
+       {!isMobile && (
         <div className="testimonial-ticker" aria-label="Testimonials">
           <div className="testimonial-ticker__track">
             {[...testimonials, ...testimonials].map((t, index) => (
@@ -53,7 +55,7 @@ export default function TestimonialSection({
           </div>
         </div>
       )}
-      {testimonialTicker && isMobile && (
+      {isMobile && (
         <div className="testimonial-mobile-slider" aria-label="Testimonials">
           <Swiper
             onSwiper={(swiper) => (mobileSwiperRef.current = swiper)}
@@ -89,6 +91,8 @@ export default function TestimonialSection({
             </div>
           )}
         </div>
+      )}
+      </div>
       )}
         <div className={`testimonial-slider-wrap gap-left${testimonialTicker ? " testimonial-slider-wrap--legacy" : ""}`}>
           <Swiper

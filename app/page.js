@@ -140,6 +140,7 @@ export default function Home() {
         id="product-home-testimonials"
         data={testimonials}
         productVariant
+        testimonialTicker
       />
       <PopularCategories id="product-home-categories" data={popularCategories} />
       <OurApproach id="product-home-expert-tools" data={expertTools} />

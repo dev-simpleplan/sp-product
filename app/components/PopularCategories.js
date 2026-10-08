@@ -145,7 +145,7 @@ export default function PopularCategories({ id, data }) {
             </div>
           </div>
 
-          {categories.length > 0 && (
+          {categories.length > visibleCount && (
             <div className="popular-categories__controls">
               <button
                 type="button"

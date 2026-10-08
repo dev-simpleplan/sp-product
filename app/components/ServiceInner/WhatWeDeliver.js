@@ -91,24 +91,27 @@ export default function WhatWeDeliver({ id, data }) {
   }, [updateCursorPosition, showDragCursor]);
 
   useEffect(() => {
-    const check = () => {
-  setIsSlider(true);
+  const check = () => {
+    setIsSlider(true);
 
-  const slidesVisible =
-    window.innerWidth >= 1200
-      ? 2.35
-      : window.innerWidth >= 768
-      ? 1.8
-      : 1.1;
+    const slidesVisible =
+      window.innerWidth >= 1200
+        ? 2.35
+        : window.innerWidth >= 768
+        ? 1.8
+        : 1.1;
 
-  setShowDragCursor(blocks.length > Math.floor(slidesVisible));
-};
+    // Custom cursor sirf un devices pe jaha real mouse/trackpad hai
+    const hasMouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-    check();
-    window.addEventListener("resize", check);
+    setShowDragCursor(hasMouse && blocks.length > Math.floor(slidesVisible));
+  };
 
-    return () => window.removeEventListener("resize", check);
-  }, [blocks.length]);
+  check();
+  window.addEventListener("resize", check);
+
+  return () => window.removeEventListener("resize", check);
+}, [blocks.length]);
 
   useEffect(() => {
     if (!showDragCursor) return;

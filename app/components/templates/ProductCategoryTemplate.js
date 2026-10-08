@@ -116,7 +116,6 @@ export default function ProductCategoryTemplate({ slug }) {
       <TestimonialSection
         id="product-category-testimonials"
         data={testimonials}
-        productVariant
         testimonialTicker
       />
       <ProductCategoryFaq id="product-category-faq" data={category.faq_section} />
