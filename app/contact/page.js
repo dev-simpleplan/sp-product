@@ -10,6 +10,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import { useSetPreFooter } from "../context/PreFooterContext";
 import { asPlainText } from "../components/contactContent";
 import ContactForm from "../components/ContactForm";
+import GoogleMap from "../components/GoogleMap";
 import "./contactStyle.css";
 
 export default function ContactPage() {
@@ -103,9 +104,10 @@ export default function ContactPage() {
               <h2 className="contact-section-title">{findUs?.title}</h2>
               <div className="find-us-grid">
               <div className="find-us-map">
-                {findUs?.map_image && (
+                {/* {findUs?.map_image && (
                   <img src={getImageUrl(findUs.map_image)} alt="SimplePlan Media location map" />
-                )}
+                )} */}
+                <GoogleMap />
               </div>
               <div className="find-us-info">
                 <div className="find-us-block">
