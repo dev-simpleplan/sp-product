@@ -77,30 +77,6 @@ const CLOSE_ICON = (
 // without it snapping shut in the gap between them.
 const CLOSE_DELAY_MS = 200;
 
-const PRODUCT_SHOP_COLUMNS = [
-  {
-    id: "product-audience",
-    page_name: "For",
-    page_url: "#",
-    sub_pages: [
-      { id: "freelancers", page_name: "Freelancers", page_url: "#" },
-      { id: "founders", page_name: "Founders", page_url: "#" },
-      { id: "agency-owners", page_name: "Agency Owners", page_url: "#" },
-    ],
-  },
-  {
-    id: "product-types",
-    page_name: "Products",
-    page_url: "#",
-    sub_pages: [
-      { id: "guides", page_name: "Guides", page_url: "#" },
-      { id: "diy-templates", page_name: "DIY Templates", page_url: "#" },
-      { id: "website-templates", page_name: "Website Templates", page_url: "#" },
-      { id: "shopify-apps", page_name: "Shopify Apps", page_url: "#" },
-    ],
-  },
-];
-
 const PRODUCT_SHOP_CTA = {
   label: "Shop All Products",
   href: "/shop",
@@ -116,8 +92,18 @@ function normalizeLink(link, fallback) {
   return isPlaceholderLink(link) ? fallback : link;
 }
 
-function productMenuLink(link, id, fallback = "#") {
-  return normalizeLink(link, id ? `/category/${id}` : fallback);
+function slugify(text) {
+  return (text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Sub-page links that the CMS leaves as "#" fall back to their category page.
+function productMenuLink(link, name, fallback = "#") {
+  const slug = slugify(name);
+  return normalizeLink(link, slug ? `/category/${slug}` : fallback);
 }
 
 export default function Header() {
@@ -169,23 +155,22 @@ export default function Header() {
       (menu) => (menu?.page_name || "").trim().toLowerCase() === targetName
     ) || headerMenu[fallbackIndex] || null;
 
-  const whatWeDoMenu = findMenu("what we do", 0);
+  const whatWeDoMenu = isProductHeader ? findMenu("shop", 0) : findMenu("what we do", 0);
   const aboutUsMenu = findMenu("about us", 1);
   const ourWorkMenu = findMenu("our work", 2);
 
-  const whatWeDoColumns = isProductHeader
-    ? PRODUCT_SHOP_COLUMNS
-    : whatWeDoMenu?.mega_menu || [];
+  const whatWeDoColumns = whatWeDoMenu?.mega_menu || [];
   const aboutUsColumns = aboutUsMenu?.mega_menu || [];
 
-  const whatWeDoLabel = isProductHeader ? "Shop" : whatWeDoMenu?.page_name || "What We Do";
-  const aboutUsLabel = isProductHeader ? "About Us" : aboutUsMenu?.page_name || "About Us";
+  const whatWeDoLabel = whatWeDoMenu?.page_name || "";
+  const aboutUsLabel = aboutUsMenu?.page_name || "";
+  const productAboutLink = normalizeLink(aboutUsMenu?.page_url, PRODUCT_ABOUT_LINK);
   const ourWorkLabel = ourWorkMenu?.page_name || "Our Work";
   const ourWorkLink = normalizeLink(ourWorkMenu?.page_url, "/our-work");
   const ctaLink = isProductHeader
     ? "/contact"
     : normalizeLink(headerData?.cta_link, "/contact");
-  const ctaText = headerData?.cta_text || "Book A Call";
+  const ctaText = headerData?.cta_text || (isProductHeader ? "" : "Book A Call");
   // MainLogo is a static-import object ({src, width, height, ...}), not a
   // plain URL string — these render as a plain <img>, not next/image's
   // <Image>, so it must be unwrapped to .src or the browser literally
@@ -421,11 +406,13 @@ useEffect(() => {
   } ${isInnerPage ? styles.spHeaderWhite : ""}`}
   ref={headerRef}
 >
-  {isProductHeader && (
+  {isProductHeader && (headerData?.topbar_title || headerData?.topbar_text) && (
     <div className={styles.spOfferBar}>
-      <strong>Limited Time Offer</strong>
-      <span aria-hidden="true">•</span>
-      <span>Join 1,000+ builders. Use code <b>GROW20</b> for 20% off all bundles.</span>
+      {headerData.topbar_title && <strong>{headerData.topbar_title}</strong>}
+      {headerData.topbar_title && headerData.topbar_text && (
+        <span aria-hidden="true">•</span>
+      )}
+      {headerData.topbar_text && <span>{headerData.topbar_text}</span>}
     </div>
   )}
   <div className={styles.spHeaderInner}>
@@ -469,7 +456,7 @@ useEffect(() => {
         </button>
 
         {isProductHeader ? (
-          <Link href={PRODUCT_ABOUT_LINK} className={styles.spNavLink}>
+          <Link href={productAboutLink} className={styles.spNavLink}>
             {aboutUsLabel}
           </Link>
         ) : (
@@ -520,7 +507,7 @@ useEffect(() => {
         </button>
 
         {isProductHeader ? (
-          <Link href={PRODUCT_ABOUT_LINK} className={styles.spNavLink}>
+          <Link href={productAboutLink} className={styles.spNavLink}>
             {aboutUsLabel}
           </Link>
         ) : (
@@ -590,13 +577,13 @@ useEffect(() => {
             <div className={styles.spMegaMenuColumns}>
               {whatWeDoColumns.map((column) => (
                 <div className={styles.spMegaMenuColumn} key={column.id}>
-                  <a href={isProductHeader ? productMenuLink(column.page_url, column.id) : (column.page_url || "#")} className={styles.spMegaMenuColumnTitle}>
+                  <a href={isProductHeader ? productMenuLink(column.page_url, null) : (column.page_url || "#")} className={styles.spMegaMenuColumnTitle}>
                     <span>{column.page_name}</span>
                   </a>
                   <ul className={styles.spMegaMenuLinkList}>
                     {(column.sub_pages || []).map((sub) => (
                       <li key={sub.id}>
-                        <a href={isProductHeader ? productMenuLink(sub.page_url, sub.id) : (sub.page_url || "#")} className={styles.spMegaMenuLink}>
+                        <a href={isProductHeader ? productMenuLink(sub.page_url, sub.page_name) : (sub.page_url || "#")} className={styles.spMegaMenuLink}>
                             <span>{sub.page_name}</span>
                         </a>
                       </li>
@@ -725,7 +712,7 @@ useEffect(() => {
               <li className={styles.spMobileItem}>
                 {isProductHeader ? (
                   <a
-                    href={PRODUCT_ABOUT_LINK}
+                    href={productAboutLink}
                     className={styles.spMobileItemBtn}
                     onClick={closeMobileMenu}
                   >
@@ -784,7 +771,7 @@ useEffect(() => {
             <div className={styles.spMobileSubList}>
               {whatWeDoColumns.map((column) => (
                 <div className={styles.spMobileGroup} key={column.id}>
-                  <a href={isProductHeader ? productMenuLink(column.page_url, column.id) : (column.page_url || "#")} className={styles.spMobileGroupTitle}>
+                  <a href={isProductHeader ? productMenuLink(column.page_url, null) : (column.page_url || "#")} className={styles.spMobileGroupTitle}>
                     <span>{column.page_name}</span>
                     <span className={styles.spMobileChevron}>
                       {CHEVRON_RIGHT}
@@ -794,7 +781,7 @@ useEffect(() => {
                     {(column.sub_pages || []).map((sub) => (
                       <li key={sub.id}>
                         <a
-                          href={isProductHeader ? productMenuLink(sub.page_url, sub.id) : (sub.page_url || "#")}
+                          href={isProductHeader ? productMenuLink(sub.page_url, sub.page_name) : (sub.page_url || "#")}
                           className={styles.spMobileGroupLink}
                           onClick={closeMobileMenu}
                         >
