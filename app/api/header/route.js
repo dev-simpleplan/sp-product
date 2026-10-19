@@ -3,7 +3,7 @@
 export async function GET() {
   try {
     const res = await fetch(
-      "http://72.61.235.119:1337/api/header?populate[logo]=true&populate[header_menu][populate][mega_menu][populate][sub_pages]=true",
+      "http://72.61.235.119:1337/api/product-header?populate[logo]=true&populate[header_menu][populate][mega_menu][populate][sub_pages]=true",
       {
         headers: {
           Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
