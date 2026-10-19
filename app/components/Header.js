@@ -108,13 +108,10 @@ function productMenuLink(link, name, fallback = "#") {
 
 export default function Header() {
   const pathname = usePathname();
-  const isProductHeader =
-    pathname === "/" ||
-    pathname === "/about" ||
-    pathname === "/shop" ||
-    pathname === "/contact" ||
-    pathname === "/privacy-policy" ||
-    pathname?.startsWith("/category");
+  // This site only has product pages, so every route uses the product
+  // header (content from /api/product-header) — no "What We Do / Our Work"
+  // variant.
+  const isProductHeader = true;
 
   // Pages that get the white header + black logo. This is an ALLOWLIST —
   // only pages listed here (or nested under them) get the white treatment;
