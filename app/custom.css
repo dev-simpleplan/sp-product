@@ -3050,6 +3050,11 @@
   font-size: clamp(18px, 1.8vw, 20px);
 }
 
+.testimonial-ticker__item .testimonial-product-label {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
 .testimonial-ticker__quote {
   color: var(--sp-white);
   font-size: clamp(20px, 2vw, 28px);
