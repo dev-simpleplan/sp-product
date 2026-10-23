@@ -167,7 +167,8 @@ export default function Header() {
   const ctaLink = isProductHeader
     ? "/contact"
     : normalizeLink(headerData?.cta_link, "/contact");
-  const ctaText = headerData?.cta_text || (isProductHeader ? "" : "Book A Call");
+  // const ctaText = headerData?.cta_text || (isProductHeader ? "" : "Book A Call");
+  const ctaText = headerData?.cta_text || "Book A Call";
   // MainLogo is a static-import object ({src, width, height, ...}), not a
   // plain URL string — these render as a plain <img>, not next/image's
   // <Image>, so it must be unwrapped to .src or the browser literally
