@@ -52,7 +52,9 @@ export default function TestimonialSection({
                 </p>
                 <div className="testimonial-ticker__author">
                   <p className="author-name">{t.user_name || t.name}</p>
-                  <p className="author-desig">{t.user_designation}</p>
+                  <p className="author-desig">
+                    {productVariant ? `★ ${t.rating || "4.9"}` : t.user_designation}
+                  </p>
                 </div>
               </article>
             ))}
@@ -82,7 +84,9 @@ export default function TestimonialSection({
                   </p>
                   <div className="testimonial-ticker__author">
                     <p className="author-name">{t.user_name || t.name}</p>
-                    <p className="author-desig">{t.user_designation}</p>
+                    <p className="author-desig">
+                    {productVariant ? `★ ${t.rating || "4.9"}` : t.user_designation}
+                  </p>
                   </div>
                 </article>
               </SwiperSlide>
