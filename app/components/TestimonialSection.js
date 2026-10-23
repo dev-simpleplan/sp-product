@@ -40,9 +40,13 @@ export default function TestimonialSection({
           <div className="testimonial-ticker__track">
             {[...testimonials, ...testimonials].map((t, index) => (
               <article className="testimonial-ticker__item" key={`${t.id}-${index}`}>
-                <div className="testimonial-ticker__stars" aria-label="5 out of 5 stars">
-                  ★★★★★
-                </div>
+                {productVariant ? (
+                  <span className="testimonial-product-label">Brand Bundle Kit</span>
+                ) : (
+                  <div className="testimonial-ticker__stars" aria-label="5 out of 5 stars">
+                    ★★★★★
+                  </div>
+                )}
                 <p className="testimonial-ticker__quote">
                   {t.testimonial_text?.[0]?.children?.[0]?.text || t.text || t.testimonial}
                 </p>
@@ -66,9 +70,13 @@ export default function TestimonialSection({
             {testimonials.map((t) => (
               <SwiperSlide key={t.id}>
                 <article className="testimonial-ticker__item">
-                  <div className="testimonial-ticker__stars" aria-label="5 out of 5 stars">
-                    ★★★★★
-                  </div>
+                  {productVariant ? (
+                    <span className="testimonial-product-label">Brand Bundle Kit</span>
+                  ) : (
+                    <div className="testimonial-ticker__stars" aria-label="5 out of 5 stars">
+                      ★★★★★
+                    </div>
+                  )}
                   <p className="testimonial-ticker__quote">
                     {t.testimonial_text?.[0]?.children?.[0]?.text || t.text || t.testimonial}
                   </p>
