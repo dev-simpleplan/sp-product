@@ -29,6 +29,13 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Staging (*.vercel.app) must not be indexed by Google. The custom
+        // domain doesn't match, so the live site stays indexable.
+        source: "/:path*",
+        has: [{ type: "host", value: ".*\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
     ];
   },
 };
