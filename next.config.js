@@ -27,6 +27,9 @@ const nextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
+          // The whole site is behind a password gate — keep it out of
+          // search indexes while it's not meant to be publicly crawled.
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
         ],
       },
       {
