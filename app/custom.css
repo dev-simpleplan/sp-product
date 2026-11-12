@@ -615,7 +615,9 @@
 }
 
 .home-bestselling-card {
+  display: flex;
   flex: 0 0 calc((100% - 28px) / 3);
+  flex-direction: column;
 }
 
 .home-bestselling-card__image {
@@ -631,6 +633,9 @@
 }
 
 .home-bestselling-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 0px;
   margin-top: 15px;
 }
@@ -659,7 +664,7 @@
 
 .home-bestselling-card p {
   color: #fff;
-  margin: 0 0 20px;
+  margin: auto 0 20px;
   font-size: 18px;
   font-weight: 500;
 }
