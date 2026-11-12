@@ -5,9 +5,11 @@ export async function GET() {
     const res = await fetch(
       "http://72.61.235.119:1337/api/product-header?populate[logo]=true&populate[header_menu][populate][mega_menu][populate][sub_pages]=true",
       {
-        headers: {
-          Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
-        },
+        // Only send the header when a token is configured — "Bearer undefined"
+        // makes Strapi reject the call with 401 even for public content.
+        headers: process.env.STRAPI_TOKEN
+          ? { Authorization: `Bearer ${process.env.STRAPI_TOKEN}` }
+          : {},
         cache: "no-store",
       }
     );
